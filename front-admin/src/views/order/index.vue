@@ -1,0 +1,256 @@
+<template>
+  <div class="app-container">
+    <!--搜索项-->
+    <div class="opera-container">
+      <div class="operation-content" style="margin-bottom: 10px">
+        <el-button type="success" @click="handleAdd">导入订单<i class="el-icon-plus el-icon--right" /></el-button>
+      </div>
+    </div>
+
+    <!--列表展示-->
+    <el-table
+      ref="table"
+      v-loading="listLoading"
+      :data="list"
+      element-loading-text="数据加载中..."
+      border
+      highlight-current-row
+      @selection-change="handleSelectionChange"
+    >
+      <el-table-column
+        type="selection"
+        align="center"
+        width="55"
+      />
+      <el-table-column align="center" label="订单ID" width="95" :resizable="false">
+        <template slot-scope="scope">
+          {{ scope.row.order_id }}
+        </template>
+      </el-table-column>
+      <el-table-column label="产品编码" width="100" :resizable="false">
+        <template slot-scope="scope">
+          {{ scope.row.product_code }}
+        </template>
+      </el-table-column>
+      <el-table-column label="订单编号" :width="180" align="center" :resizable="false">
+        <template slot-scope="scope">
+          {{ scope.row.order_number }}
+        </template>
+      </el-table-column>
+      <el-table-column label="订单名称" width="160" align="center" :resizable="false">
+        <template slot-scope="scope">
+          {{ scope.row.order_name }}
+        </template>
+      </el-table-column>
+      <el-table-column label="生产总量" width="100" align="center" :resizable="false">
+        <template slot-scope="scope">
+          {{ scope.row.total_quantity }}
+        </template>
+      </el-table-column>
+      <el-table-column label="单位" width="100" align="center" :resizable="false">
+        <template slot-scope="scope">
+          {{ scope.row.unit }}
+        </template>
+      </el-table-column>
+      <el-table-column label="单价" width="100" align="center" :resizable="false">
+        <template slot-scope="scope">
+          {{ scope.row.unit_price }}
+        </template>
+      </el-table-column>
+      <el-table-column label="预计回货日期" width="100" align="center" :resizable="false">
+        <template slot-scope="scope">
+          {{ scope.row.estimated_return_date }}
+        </template>
+      </el-table-column>
+      <el-table-column label="回货数量" width="100" align="center" :resizable="false">
+        <template slot-scope="scope">
+          {{ scope.row.return_quantity }}
+        </template>
+      </el-table-column>
+      <el-table-column label="生产总价（元）" width="100" align="center" :resizable="false">
+        <template slot-scope="scope">
+          {{ scope.row.production_price }}
+        </template>
+      </el-table-column>
+      <el-table-column label="当前状态" width="100" align="center" :resizable="false">
+        <template slot-scope="scope">
+          {{ scope.row.guideCount | validFilter }}
+        </template>
+      </el-table-column>
+      <el-table-column label="物料说明" width="100" align="center" :resizable="false">
+        <template slot-scope="scope">
+          {{ scope.row.material_description }}
+        </template>
+      </el-table-column>
+      <el-table-column fixed="right" align="center" prop="" label="操作" width="440" :resizable="false">
+        <template slot-scope="scope">
+          <div class="table-operation-content">
+            <el-button type="primary" plain size="mini" @click="dispatchOrder(scope.row, 'dispatch')">分配</el-button>
+            <el-button type="primary" plain size="mini" @click="dispatchOrder(scope.row, 'detail')">分配详情</el-button>
+            <el-button type="primary" plain size="mini" @click="cancelOrder(scope.row)">取消订单</el-button>
+          </div>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-pagination
+      :current-page="currentPage"
+      :page-size="pageSize"
+      :page-sizes="[10, 15, 20, 30]"
+      layout="total, prev, pager, next, jumper"
+      :total="total"
+      class="pagination"
+      @current-change="handleCurrentChange"
+    />
+    <DispatchOrderBox :show.sync="showDispatchOrder" :current-row-data="currentRowData" :current-type="currentType" />
+  </div>
+</template>
+
+<script>
+import DispatchOrderBox from './components/dispatchOrderBox'
+export default {
+  name: 'Product',
+  components: {
+    DispatchOrderBox
+  },
+  filters: {
+    validFilter(val) {
+      return val === 1 ? '有效' : '无效'
+    }
+  },
+  data() {
+    return {
+      list: null,
+      listLoading: true,
+      searchForm: {
+        productId: '',
+        poiName: '',
+        isValid: '1',
+        cityId: ''
+      },
+      currentProductId: '',
+      currentProductName: '',
+      showDispatchOrder: false,
+      currentRowData: {},
+      currentType: '',
+      cityOptions: [],
+      cityLoading: false,
+      multipleSelection: [],
+      currentPage: 1,
+      total: 0
+    }
+  },
+  created() {
+    this.fetchData()
+  },
+  methods: {
+    handleAdd() {
+      this.$router.push({
+        path: '/product/addAndEditProduct',
+        query: {
+          type: 'add'
+        }
+      })
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`)
+      this.currentPage = val
+      this.fetchData()
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
+    dispatchOrder(rowData, type) {
+      this.showDispatchOrder = true
+      this.currentRowData = rowData
+      this.currentType = type
+    },
+    cancelOrder(rowData) {
+      this.$confirm('是否确定取消订单?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$request({
+          url: `/orders/${rowData.order_id}`,
+          method: 'delete'
+        }).then(res => {
+          if (res.data.success) {
+            this.$message({
+              type: 'success',
+              message: '订单已取消!'
+            })
+          }
+        }).catch(() => {
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
+    },
+    fetchData() {
+      this.listLoading = true
+      const params = {
+        'page': this.currentPage,
+        'page_size': this.pageSize
+      }
+
+      this.list = [{
+        'order_id': 'int', // 订单ID
+        'order_number': 'string', // 订单编号
+        'order_name': 'string', // 订单名称
+        'product_code': 'string', // 产品编码
+        'total_quantity': 'int', // 订单总数量（生产总量）
+        'status': 'string', // 订单状态 英文枚举需要转成中文 所以都这样
+        'unit_price': 'decimal', // 单价
+        'estimated_return_date': 'date', // 预计回货时间
+        'unit': 'string', // 单位
+        'return_quantity': 'int', // 回货数量
+        'production_price': 'string', // 生成总价
+        'material_description': 'string'// 物料说明
+      }]
+      this.listLoading = false
+      return
+
+      this.$request({
+        url: '/orders',
+        method: 'get',
+        data: params
+      }).then(res => {
+        this.list = res?.data?.orders || []
+        this.listLoading = false
+        this.total = res?.data?.total
+      }).catch(err => {
+        console.log(err)
+        this.list = []
+        this.listLoading = false
+      })
+    }
+  }
+}
+</script>
+<style lang="scss" scoped>
+.opera-container {
+  display: flex;
+  justify-content: space-between;
+
+  .operation-content {
+    width: 500px;
+  }
+
+  .search-content {
+    flex: 1;
+    text-align: right;
+  }
+}
+.show-img-title {
+  margin-right: 10px;
+  display: inline-block;
+  margin-bottom: 34px;
+}
+.pagination {
+  text-align: right;
+  padding: 10px 0;
+}
+</style>

@@ -26,11 +26,11 @@
           </el-form-item>
           <el-form-item label="服务点类型" prop="type">
             <el-radio-group v-model="formData.type">
-              <el-radio label="1">直营点</el-radio>
-              <el-radio label="2">非直营点</el-radio>
+              <el-radio label="DIRECT">直营点</el-radio>
+              <el-radio label="NON_DIRECT">非直营点</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="是否代结工资" prop="is_salary_managed">
+          <el-form-item v-if="formData.type === 'NON_DIRECT'" label="是否代结工资" prop="is_salary_managed">
             <el-radio-group v-model="formData.is_salary_managed">
               <el-radio :label="true">代结</el-radio>
               <el-radio :label="false">不代结</el-radio>
@@ -129,10 +129,14 @@ export default {
           this.saveLoading = true
           if (this.currentRowData.service_point_id) {
             const params = {
-              ...this.formData
+              ...this.formData,
+              is_salary_managed: this.formData.type === 'DIRECT' ? true : this.formData.is_salary_managed
             }
             delete params.service_point_id
             delete params.is_deleted
+            if (!params.login_password_hash) {
+              delete params.login_password_hash
+            }
             this.$request.put(`/service_points/${this.currentRowData.service_point_id}`,
               {
                 'name': params.name, // 服务点名称
@@ -156,7 +160,8 @@ export default {
           } else {
             this.$request.post('/service_points',
               {
-                ...this.formData
+                ...this.formData,
+                is_salary_managed: this.formData.type === 'DIRECT' ? true : this.formData.is_salary_managed
               }).then(res => {
               if (res.success) {
                 this.$message.success('新增服务点成功')
@@ -182,6 +187,7 @@ export default {
     },
     initData() {
       if (this.currentRowData?.service_point_id) {
+        this.formDataRules.login_password_hash[0].required = false
         this.$request.get(`/service_points/${this.currentRowData.service_point_id}`, {}).then(res => {
           const { data } = res
           if (data) {
@@ -189,6 +195,7 @@ export default {
           }
         })
       } else {
+        this.formDataRules.login_password_hash[0].required = true
         this.formData = {
           'name': '', // 服务点名称
           'manager_name': '', // 负责人姓名

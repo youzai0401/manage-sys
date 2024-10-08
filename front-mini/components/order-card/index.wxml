@@ -7,7 +7,7 @@
     <t-divider />
     <view class="card-item">
       <view>工单ID</view>
-      <view>{{data.order_id}}</view>
+      <view>{{data.work_order_id}}</view>
     </view>
     <view class="card-item">
       <view>生产单价</view>

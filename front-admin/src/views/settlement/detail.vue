@@ -53,7 +53,7 @@
           {{ scope.row.actual_return_quantity }}
         </template>
       </el-table-column>
-      <el-table-column label="单位报价(元)" :min-width="180" align="center" :resizable="false">
+      <el-table-column label="单位报价（元）" :min-width="180" align="center" :resizable="false">
         <template slot-scope="scope">
           {{ scope.row.assignments_price }}
         </template>

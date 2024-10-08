@@ -58,7 +58,7 @@
       <!--      关闭按钮-->
       <div slot="footer" class="footer">
         <el-button @click="showDialog = false">关闭</el-button>
-        <el-button v-if="currentType !== 'detail'" type="primary" @click="handleSave">分配</el-button>
+        <el-button v-if="currentType !== 'detail'" :loading="saveLoading" type="primary" @click="handleSave">分配</el-button>
       </div>
     </el-dialog>
   </div>
@@ -93,6 +93,7 @@ export default {
           'estimated_pay_date': '' // 最晚交付时间 （不填 预留）
         }
       ],
+      saveLoading: false,
       selectLoading: false,
       serverOption: [],
       options: [{
@@ -154,6 +155,8 @@ export default {
       })
     },
     handleSave() {
+      // todo 校验
+      this.saveLoading = true
       this.$request.post(`/orders/${this.currentRowData.order_id}/assignments`,
         {
           assignments: this.assignments
@@ -165,6 +168,8 @@ export default {
         } else {
           this.$message.error(res.message)
         }
+      }).finally(() => {
+        this.saveLoading = false
       })
     },
     remoteMethod(query) {

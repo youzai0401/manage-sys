@@ -1,9 +1,3 @@
-import {
-  fetchPerson
-} from '../../../services/usercenter/fetchPerson';
-import {
-  phoneEncryption
-} from '../../../utils/util';
 import Toast from 'tdesign-miniprogram/toast/index';
 //获取全局数据
 var app = getApp();
@@ -14,6 +8,9 @@ Page({
     phone: "",
     showUnbindConfirm: false,
     typeVisible: false,
+  },
+  onShow() {
+    this.init();
   },
   onLoad() {
     this.init();

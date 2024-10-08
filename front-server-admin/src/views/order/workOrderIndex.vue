@@ -34,32 +34,36 @@
       </el-table-column>
       <el-table-column label="领取时间" width="160" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.material_pickup_date }}
+          {{ scope.row.material_pickup_date ? $dayjs(scope.row.material_pickup_date).format('YYYY-MM-DD') : "-" }}
         </template>
       </el-table-column>
-      <el-table-column label="单价(元)" width="100" align="center" :resizable="false">
+      <el-table-column label="单价（元）" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
           {{ scope.row.worker_unit_price }}
         </template>
       </el-table-column>
-      <el-table-column label="总价(元)" width="100" align="center" :resizable="false">
+      <el-table-column label="总价（元）" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
           {{ scope.row.worker_total_price }}
         </template>
       </el-table-column>
       <el-table-column label="工单状态" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.status }}
+          <el-tag v-if="scope.row.status === '待取料'" type="warning">{{ scope.row.status }}</el-tag>
+          <el-tag v-if="scope.row.status === '加工中'" type="info">{{ scope.row.status }}</el-tag>
+          <el-tag v-if="scope.row.status === '已交付'">{{ scope.row.status }}</el-tag>
+          <el-tag v-if="scope.row.status === '已完成'" type="success">{{ scope.row.status }}</el-tag>
+          <el-tag v-if="scope.row.status === '作废'" type="danger">{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="预计交付时间" width="140" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.estimated_pay_date }}
+          {{ $dayjs(scope.row.estimated_pay_date).format('YYYY-MM-DD') }}
         </template>
       </el-table-column>
       <el-table-column label="实际交付时间" width="140" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.completion_date }}
+          {{ scope.row.completion_date ? $dayjs(scope.row.completion_date).format('YYYY-MM-DD') : "-" }}
         </template>
       </el-table-column>
       <el-table-column label="订单ID" width="100" align="center" :resizable="false">
@@ -80,10 +84,10 @@
       <el-table-column fixed="right" align="center" prop="" label="操作" width="440" :resizable="false">
         <template slot-scope="scope">
           <div class="table-operation-content">
-            <el-button type="primary" plain size="mini" @click="dispatchOrder(scope.row)">发放物料</el-button>
-            <el-button type="primary" plain size="mini" @click="finishOrder(scope.row)">结算</el-button>
-            <el-button type="primary" plain size="mini" @click="changeOrder(scope.row)">改单</el-button>
-            <el-button type="primary" plain size="mini" @click="cancelOrder(scope.row)">作废</el-button>
+            <el-button :disabled="scope.row.status === '作废' || scope.row.status === '加工中' || scope.row.status === '已交付'" type="primary" plain size="mini" @click="dispatchOrder(scope.row)">发放物料</el-button>
+            <el-button :disabled="scope.row.status === '作废' || scope.row.status === '待领取' || scope.row.status === '已交付'" type="success" plain size="mini" @click="finishOrder(scope.row)">结算</el-button>
+            <el-button :disabled="scope.row.status === '作废'" type="warning" plain size="mini" @click="changeOrder(scope.row)">改单</el-button>
+            <el-button :disabled="scope.row.status === '作废'" type="danger" plain size="mini" @click="cancelOrder(scope.row)">作废</el-button>
           </div>
         </template>
       </el-table-column>
@@ -98,15 +102,14 @@
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
     />
-    <changeOrderBox :show.sync="showChangeOrder" :current-row-data="currentRowData" />
-    <finishOrderBox :show.sync="showFinishOrder" :current-row-data="currentRowData" />
+    <changeOrderBox :show.sync="showChangeOrder" :current-row-data="currentRowData" @success="refresh" />
+    <finishOrderBox :show.sync="showFinishOrder" :current-row-data="currentRowData" @success="refresh" />
   </div>
 </template>
 
 <script>
 import changeOrderBox from './components/changeOrderBox.vue'
 import finishOrderBox from '@/views/order/components/finishOrderBox.vue'
-import row from 'element-ui/packages/row'
 export default {
   name: 'Product',
   components: {
@@ -154,6 +157,10 @@ export default {
           type: 'add'
         }
       })
+    },
+    refresh() {
+      this.currentPage = 1
+      this.fetchData()
     },
     handleSizeChange(val) {
       this.currentPage = 1

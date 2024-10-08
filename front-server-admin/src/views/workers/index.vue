@@ -29,12 +29,12 @@
       </el-table-column>
       <el-table-column label="姓名" min-width="100" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.name }}
+          {{ scope.row.name || "微信用户" }}
         </template>
       </el-table-column>
       <el-table-column label="登记时间" :min-width="180" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.registration_date }}
+          {{ $dayjs(scope.row.registration_date).format('YYYY-MM-DD') }}
         </template>
       </el-table-column>
       <el-table-column label="联系方式" min-width="160" align="center" :resizable="false">
@@ -59,6 +59,7 @@
       :total="total"
       class="pagination"
       @current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
     />
     <editBox :show.sync="showEditBox" :current-row-data="currentRowData" />
   </div>
@@ -111,6 +112,11 @@ export default {
       this.currentPage = val
       this.fetchData()
     },
+    handleSizeChange(val) {
+      this.currentPage = 1
+      this.pageSize = val
+      this.fetchData()
+    },
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
@@ -150,24 +156,24 @@ export default {
         'page_size': this.pageSize
       }
 
-      this.list = [{
-        'worker_id': 'int', // 工人ID
-        'name': 'string', // 工人姓名
-        'contact_number': 'string', // 联系电话
-        'registration_date': 'datetime', // 注册时间
-        'service_point_id': 'int', // 所属服务点ID
-        'wechat_openid': 'string', // 微信OpenID
-        'is_deleted': 'boolean' // 是否已删除（逻辑删除）
-      }]
-      this.listLoading = false
-      return
-
+      // this.list = [{
+      //   'worker_id': 'int', // 工人ID
+      //   'name': 'string', // 工人姓名
+      //   'contact_number': 'string', // 联系电话
+      //   'registration_date': 'datetime', // 注册时间
+      //   'service_point_id': 'int', // 所属服务点ID
+      //   'wechat_openid': 'string', // 微信OpenID
+      //   'is_deleted': 'boolean' // 是否已删除（逻辑删除）
+      // }]
+      // this.listLoading = false
+      // return
+      this.listLoading = true
       this.$request({
         url: '/workers',
         method: 'get',
         data: params
       }).then(res => {
-        this.list = res?.data?.workers || []
+        this.list = res?.data?.data || []
         this.listLoading = false
         this.total = res?.data?.total
       }).catch(err => {

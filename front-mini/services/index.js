@@ -94,3 +94,13 @@ export function workerRanking(data) {
 export function serviceRanking(data) {
   return request("/rankings/service_points", "get", data);
 }
+
+// 服务点绑定
+export function bindServicePoint(data) {
+  return request("/auth/worker/bindServicePoint", "post", data);
+}
+
+// 保存用户信息
+export function saveUserInfo(data) {
+  return request("/auth/worker/save_info", "post", data);
+}

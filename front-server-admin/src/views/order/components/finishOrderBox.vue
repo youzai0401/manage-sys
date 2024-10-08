@@ -2,43 +2,69 @@
   <div class="log-info">
     <!-- 弹窗展示日志信息，弹窗内包含一个列表和分页，包含关闭按钮 -->
     <el-dialog
-      title="发布订单"
+      title="结算工单"
       :visible.sync="showDialog"
       width="500"
       @close="handleClose"
     >
       <div class="log-info__content">
-        <p style="font-size: 16px; font-weight: bolder">订单信息如下，是否确认发布此订单？</p>
         <el-form ref="formData" :inline="false" :model="formData" :rules="formDataRules" label-width="120px">
-          <el-form-item label="订单名称">
-            <span>{{ currentRowData.order_name }}</span>
+          <el-form-item label="计划回货量">
+            <span>{{ currentRowData.receiver_quantity }}</span>
           </el-form-item>
-          <el-form-item label="生产总量">
-            <span>{{ currentRowData.quantity }}</span>
+          <el-form-item label="结算单价">
+            <span>{{ currentRowData.worker_unit_price }} （元）</span>
           </el-form-item>
-          <el-form-item label="生产总价">
-            <span>{{ currentRowData.assignments_total_price }}</span>
-          </el-form-item>
-          <el-form-item label="回货日期">
-            <span>{{ currentRowData.estimated_return_date }}</span>
-          </el-form-item>
-
-          <el-form-item label="工人单价" prop="worker_unit_price">
-            <el-input v-model="formData.worker_unit_price" placeholder="请输入工人生产单支报价，单位：元"><span slot="suffix">/元</span></el-input>
-          </el-form-item>
-          <el-form-item label="交付时间" prop="estimated_pay_date">
-            <el-date-picker
-              v-model="formData.estimated_pay_date"
-              type="date"
-              placeholder="请选择工人最晚交付日期和时间"
-            />
-          </el-form-item>
+          <div v-if="userInfo.type === 'DIRECT' || (userInfo.type !== 'DIRECT' && userInfo.is_salary_managed)">
+            <el-form-item label="实际回货量" prop="actual_settlement_quantity">
+              <el-input v-model.number="formData.actual_settlement_quantity" placeholder="请填写实际回货量"><span slot="suffix">/元</span></el-input>
+            </el-form-item>
+            <el-form-item label="工单质检合格率" prop="work_order_quality_rate">
+              <el-input v-model.number="formData.work_order_quality_rate" placeholder="请填写质检合格率"><span slot="suffix">%</span></el-input>
+            </el-form-item>
+            <el-form-item label="额外类型" prop="worker_unit_price">
+              <el-radio-group v-model="reward_type">
+                <el-radio label="1">奖励</el-radio>
+                <el-radio label="2">扣款</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <template v-if="reward_type === '1'">
+              <el-form-item label="额外奖励" prop="reward_salary">
+                <el-input v-model.number="formData.reward_salary" placeholder="请填写奖励金额（元）"><span slot="suffix">/元</span></el-input>
+              </el-form-item>
+              <el-form-item label="额外奖励原因" prop="reward_reason">
+                <el-input v-model="formData.reward_reason" placeholder="请填写奖励原因"><span slot="suffix">/元</span></el-input>
+              </el-form-item>
+            </template>
+            <template v-if="reward_type === '2'">
+              <el-form-item label="额外扣款" prop="deduction_salary">
+                <el-input v-model.number="formData.deduction_salary" placeholder="请填写扣款金额（元）"><span slot="suffix">/元</span></el-input>
+              </el-form-item>
+              <el-form-item label="额外扣款原因" prop="deduction_reason">
+                <el-input v-model="formData.deduction_reason" placeholder="请填写扣款原因"><span slot="suffix">/元</span></el-input>
+              </el-form-item>
+            </template>
+            <el-form-item label="预计发放工资为">
+              <span style="color: red; font-size: 16px">todo 待补充逻辑{{ formData.actual_salary }} 元</span>
+            </el-form-item>
+          </div>
+          <div v-else>
+            <el-form-item label="工单质检合格率" prop="work_order_quality_rate">
+              <el-input v-model.number="formData.work_order_quality_rate" placeholder="请填写质检合格率"><span slot="suffix">%</span></el-input>
+            </el-form-item>
+            <el-form-item label="结算金额" prop="actual_salary">
+              <el-input v-model.number="formData.actual_salary" placeholder="请填写本单结算金额（元）"><span slot="suffix">/元</span></el-input>
+            </el-form-item>
+            <el-form-item label="预计发放工资为">
+              <span style="color: red; font-size: 16px">{{ formData.actual_salary }} 元</span>
+            </el-form-item>
+          </div>
         </el-form>
       </div>
       <!--      关闭按钮-->
       <div slot="footer" class="footer">
         <el-button @click="showDialog = false">取消</el-button>
-        <el-button :loading="isSaving" type="primary" @click="handleSave">发布</el-button>
+        <el-button :loading="isSaving" type="primary" @click="handleSave">结算</el-button>
       </div>
     </el-dialog>
   </div>
@@ -57,29 +83,35 @@ export default {
     show: {
       type: Boolean,
       default: false
-    },
-    currentType: {
-      type: String,
-      default: ''
     }
   },
   data() {
     return {
+      reward_type: '',
       isSaving: false,
       formDataRules: {
-        worker_unit_price: [
-          { required: true, message: '请输入工人单价', trigger: 'blur' }
+        actual_settlement_quantity: [
+          { required: true, message: '请填写实际回货量', trigger: 'blur' }
         ],
-        estimated_pay_date: [
-          { required: true, message: '请选择交付时间', trigger: 'blur' }
+        work_order_quality_rate: [
+          { required: true, message: '请填写质检合格率', trigger: 'blur' }
+        ],
+        actual_salary: [
+          { required: true, message: '请填写本单结算金额', trigger: 'blur' }
         ]
       },
       formData: {
-        estimated_pay_date: '',
-        worker_unit_price: ''
+        'reward_salary': '', // 奖励工资
+        'reward_reason': '', // 奖励原因
+        'deduction_salary': '', // 扣除工资
+        'deduction_reason': '', // 扣除原因
+        'actual_settlement_quantity': '', // 实际回货量
+        'work_order_quality_rate': '', // 工单质检合格率
+        'actual_salary': '' // 实际工资金额（预计发放工资）
       },
       selectLoading: false,
-      serverOption: []
+      serverOption: [],
+      userInfo: {}
     }
   },
   computed: {
@@ -101,7 +133,21 @@ export default {
   watch: {
     show(val) {
       val && this.initData()
+    },
+    reward_type() {
+      Object.assign(this.formData, {
+        'reward_salary': '', // 奖励工资
+        'reward_reason': '', // 奖励原因
+        'deduction_salary': '', // 扣除工资
+        'deduction_reason': '' // 扣除原因
+      })
+    },
+    'formData.actual_settlement_quantity'() {
+
     }
+  },
+  created() {
+    this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
   },
   methods: {
     handleClose() {
@@ -114,15 +160,31 @@ export default {
             return
           }
           this.isSaving = true
-          this.$request.post(`/assignments/${this.currentRowData.assignment_id}/publish`,
-            {
-              ...this.formData
-            }).then(res => {
-            const { data } = res
-            if (data.success) {
-              this.$message.success('订单发布成功')
+          let params = {}
+          if (this.userInfo.is_salary_managed) {
+            params = {
+              'reward_salary': this.formData.reward_salary, // 奖励工资
+              'reward_reason': this.formData.reward_reason, // 奖励原因
+              'deduction_salary': this.formData.deduction_salary, // 扣除工资
+              'deduction_reason': this.formData.deduction_reason, // 扣除原因
+              'actual_settlement_quantity': this.formData.actual_settlement_quantity, // 实际回货量
+              'work_order_quality_rate': this.formData.work_order_quality_rate / 100 // 工单质检合格率
             }
-          }).catch(() => {
+          } else {
+            params = {
+              'work_order_quality_rate': this.formData.work_order_quality_rate / 100, // 工单质检合格率
+              actual_salary: this.formData.actual_salary
+            }
+          }
+          this.$request.post(`/work_orders/${this.currentRowData.work_order_id}/settlement`, params).then(res => {
+            if (res.success) {
+              this.$message.success('工单结算成功')
+              this.$emit('success')
+              this.showDialog = false
+            } else {
+              this.$message.error(res.message)
+            }
+          }).finally(() => {
             this.isSaving = false
           })
         } else {
@@ -136,8 +198,15 @@ export default {
       })
     },
     initData() {
-      this.formData.worker_unit_price = ''
-      this.formData.estimated_pay_date = ''
+      Object.assign(this.formData, {
+        'reward_salary': '', // 奖励工资
+        'reward_reason': '', // 奖励原因
+        'deduction_salary': '', // 扣除工资
+        'deduction_reason': '', // 扣除原因
+        'actual_settlement_quantity': '', // 实际回货量
+        'work_order_quality_rate': '', // 工单质检合格率
+        'actual_salary': '' // 实际工资金额（预计发放工资）
+      })
     }
   }
 }

@@ -1,10 +1,8 @@
 import {
-  fetchHome
-} from '../../services/home/home';
-import {
   fetchWorkOrderList
 } from '../../services/index';
 import Toast from 'tdesign-miniprogram/toast/index';
+import dayjs from "dayjs"
 
 Page({
   data: {
@@ -64,21 +62,7 @@ Page({
 
   loadHomePage() {
     wx.stopPullDownRefresh();
-
-    this.setData({
-      pageLoading: true,
-    });
-    fetchHome().then(({
-      swiper,
-      tabList
-    }) => {
-      this.setData({
-        tabList,
-        imgSrcs: swiper,
-        pageLoading: false,
-      });
-      this.loadGoodsList(true);
-    });
+    this.loadGoodsList(true);
   },
 
   tabChangeHandle(e) {
@@ -117,7 +101,10 @@ Page({
         page_size: pageSize,
         worker_id: this.data.userInfo.worker_id
       });
-      let listData = nextList.data.data;
+      let listData = nextList.data.data.map(item => {
+        item.estimated_pay_date = dayjs(item.estimated_pay_date).format("YYYY-MM-DD");
+        return item;
+      });
       this.setData({
         goodsList: fresh ? listData : this.data.goodsList.concat(listData),
         goodsListLoadStatus: 0,

@@ -52,14 +52,9 @@
           {{ scope.row.unit }}
         </template>
       </el-table-column>
-      <el-table-column label="单价" width="100" align="center" :resizable="false">
-        <template slot-scope="scope">
-          {{ scope.row.unit_price }}
-        </template>
-      </el-table-column>
       <el-table-column label="预计回货日期" width="160" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.estimated_return_date }}
+          {{ $dayjs(scope.row.estimated_return_date).format('YYYY-MM-DD') }}
         </template>
       </el-table-column>
       <el-table-column label="回货数量" width="100" align="center" :resizable="false">
@@ -87,7 +82,7 @@
           <div class="table-operation-content">
             <el-button v-if="scope.row.status == 'UNASSIGNED'" type="primary" plain size="mini" @click="dispatchOrder(scope.row, 'dispatch')">分配</el-button>
             <el-button v-if="scope.row.status === 'ASSIGNED' || scope.row.status === 'COMPLETED'" type="primary" plain size="mini" @click="dispatchOrder(scope.row, 'detail')">分配详情</el-button>
-            <el-button :disabled="scope.row.status === 'CANCELLED'" type="primary" plain size="mini" @click="cancelOrder(scope.row)">取消订单</el-button>
+            <el-button :disabled="scope.row.status === 'CANCELLED'" type="danger" plain size="mini" @click="cancelOrder(scope.row)">取消订单</el-button>
           </div>
         </template>
       </el-table-column>

@@ -119,6 +119,8 @@ export default {
               sessionStorage.setItem('userInfo', JSON.stringify(res.data.user))
               setToken(res.data.token)
               this.$router.push({ path: this.redirect || '/dashboard' })
+            } else {
+              this.$message.error(res.message)
             }
             this.loading = false
             // 获取用户信息

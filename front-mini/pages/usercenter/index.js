@@ -49,6 +49,11 @@ Page({
   },
 
   onShow() {
+    let userInfo = wx.getStorageSync("userInfo");
+    this.setData({
+      userInfo: userInfo,
+      phone: userInfo.contact_number
+    })
     this.getTabBar().init();
     this.init();
   },

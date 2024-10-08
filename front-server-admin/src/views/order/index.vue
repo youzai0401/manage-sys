@@ -47,9 +47,9 @@
           {{ scope.row.unit }}
         </template>
       </el-table-column>
-      <el-table-column label="单价(元)" width="100" align="center" :resizable="false">
+      <el-table-column label="单价（元）" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.unit_price }}
+          {{ scope.row.assignments_price }}
         </template>
       </el-table-column>
       <el-table-column label="生产总价（元）" width="140" align="center" :resizable="false">
@@ -59,12 +59,12 @@
       </el-table-column>
       <el-table-column label="预计回货日期" width="140" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.estimated_return_date }}
+          {{ $dayjs(scope.row.estimated_return_date).format('YYYY-MM-DD') }}
         </template>
       </el-table-column>
-      <el-table-column label="回货数量" width="100" align="center" :resizable="false">
+      <el-table-column label="回货总量" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.return_quantity }}
+          {{ scope.row.actual_return_quantity }}
         </template>
       </el-table-column>
       <el-table-column label="已领取/待领取" width="140" align="center" :resizable="false">

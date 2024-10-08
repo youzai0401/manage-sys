@@ -10,7 +10,7 @@
       </view>
 
     </t-cell>
-    <t-cell title="昵称" arrow note="{{userInfo.name || '微信用户'}}" data-type="name" bind:click="onClickCell" t-class="t-cell-class" t-class-left="order-group__left" />
+    <t-cell title="昵称" arrow note="{{userInfo.name || '--'}}" data-type="name" bind:click="onClickCell" t-class="t-cell-class" t-class-left="order-group__left" />
     <t-cell bordered="{{false}}" title="手机号" arrow note="{{phone}}" data-type="phoneNumber" bind:click="onClickCell" t-class="t-cell-class" t-class-left="order-group__left" />
   </t-cell-group>
 </view>

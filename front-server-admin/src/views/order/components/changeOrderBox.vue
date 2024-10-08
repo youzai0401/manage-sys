@@ -13,18 +13,18 @@
             <span>{{ currentRowData.work_order_id }}</span>
           </el-form-item>
           <el-form-item label="领取人">
-            <span>{{ currentRowData.worker_name }}</span>
+            <span>{{ currentRowData.worker_name || '-' }}</span>
           </el-form-item>
           <el-form-item label="领取数量" prop="receiver_quantity">
             <el-input v-model="formData.receiver_quantity" placeholder="请输入产品领取数量" />
           </el-form-item>
           <el-form-item label="工单状态" prop="status">
             <el-select v-model="formData.status" placeholder="请选择">
-              <el-option label="待取料" value="shanghai" />
-              <el-option label="加工中" value="beijing" />
-              <el-option label="已交付" value="beijing" />
-              <el-option label="完成" value="beijing" />
-              <el-option label="作废" value="beijing" />
+              <el-option label="待取料" value="TO_BE_CLAIMED" />
+              <el-option label="加工中" value="IN_PROGRESS" />
+              <el-option label="已交付" value="DELIVERED" />
+              <el-option label="完成" value="COMPLETED" />
+              <el-option label="作废" value="VOID" />
             </el-select>
           </el-form-item>
         </el-form>
@@ -100,13 +100,16 @@ export default {
             return
           }
           this.isSaving = true
-          this.$request.post(`/work_orders/${this.currentRowData.work_order_id}`,
+          this.$request.put(`/work_orders/${this.currentRowData.work_order_id}`,
             {
               ...this.formData
             }).then(res => {
-            const { data } = res
-            if (data.success) {
+            if (res.success) {
               this.$message.success('工单修改成功')
+              this.showDialog = false
+              this.$emit('success')
+            } else {
+              this.$message.error(res.message)
             }
           }).catch(() => {
             this.isSaving = false

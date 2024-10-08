@@ -13,7 +13,7 @@
       <t-image wx:if="{{userInfo.avatar_url}}" t-class="avatar-img" src="{{userInfo.avatar_url}}" mode="aspectFill" />
       <t-image wx:else t-class="avatar-img" src="../../../images/avatar.png" mode="aspectFill"></t-image>
       <view>
-        <view class="user-center-card__header__name">{{userInfo.nickName || '微信用户'}}</view>
+        <view class="user-center-card__header__name">{{userInfo.name || '--'}}</view>
         <view class="user-center-card__header__phone">
           <t-icon name="call" size="36rpx" />
           <text>{{phone || ''}}</text>

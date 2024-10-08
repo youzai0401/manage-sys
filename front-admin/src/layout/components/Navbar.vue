@@ -27,6 +27,7 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import { setToken } from '@/utils/auth'
 
 export default {
   components: {
@@ -44,8 +45,18 @@ export default {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
-      await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      this.$request({
+        url: '/auth/logout',
+        method: 'post'
+      }).then(async res => {
+        // 登录成功
+        await this.$store.dispatch('user/logout')
+        this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+        this.loading = false
+        // 获取用户信息
+      }).catch(() => {
+        this.loading = false
+      })
     }
   }
 }

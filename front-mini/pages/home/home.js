@@ -1,11 +1,10 @@
 import {
-  fetchHome
-} from '../../services/home/home';
-
-import {
   fetchOrderList,
-  claimOrder
+  claimOrder,
+  wxLogin,
+  bindServicePoint
 } from "../../services/index"
+import dayjs from "dayjs"
 
 import Toast from 'tdesign-miniprogram/toast/index';
 //获取全局数据
@@ -45,9 +44,14 @@ Page({
 
   onShow() {
     this.getTabBar().init();
+    this.init();
   },
 
-  onLoad() {
+  async onLoad(options) {
+    await wxLogin()
+    if (options.service_point_id) {
+      await this.handleBindServicePoint(options.service_point_id)
+    }
     this.init();
   },
 
@@ -59,33 +63,51 @@ Page({
       this.loadGoodsList();
     }
   },
+  handleBindServicePoint(service_point_id) {
+    return new Promise((resolve, reject) => {
+      wx.login({
+        success: res => {
+          // 获取到用户的 code 之后：res.code
+          bindServicePoint({
+            code: res.code,
+            service_point_id: service_point_id
+          }).then(res => {
+            if (res.success) {
+              // 更新用户信息
+              let userInfo = wx.getStorageSync("userInfo")
+              userInfo.service_point_id = service_point_id;
+              wx.setStorageSync("userInfo", userInfo)
+              wx.showToast({
+                title: "绑定服务点成功",
+                duration: 3000,
+                icon: 'none',
+              });
+              resolve(true)
+            } else {
+              wx.showToast({
+                title: res.message,
+                duration: 3000,
+                icon: 'none',
+              });
+              resolve(false)
+            }
 
+          }).catch((err) => {
+            reject(err)
+          })
+        }
+      });
+    })
+
+
+  },
   onPullDownRefresh() {
     this.init();
   },
 
   init() {
-    // 判断用户是否登录
-    this.loadHomePage();
-  },
-
-  loadHomePage() {
     wx.stopPullDownRefresh();
-
-    this.setData({
-      pageLoading: true,
-    });
-    fetchHome().then(({
-      swiper,
-      tabList
-    }) => {
-      this.setData({
-        tabList,
-        imgSrcs: swiper,
-        pageLoading: false,
-      });
-      this.loadGoodsList(true);
-    });
+    this.loadGoodsList(true);
   },
 
   tabChangeHandle(e) {
@@ -121,15 +143,17 @@ Page({
       return;
     }
     try {
-      console.log(pageSize);
+      let userInfo = wx.getStorageSync("userInfo")
       const nextList = await fetchOrderList({
         page: pageIndex,
         page_size: pageSize,
-        service_point_id: ""
+        service_point_id: userInfo.service_point_id
       });
 
-      console.log(nextList);
-      let listData = nextList.data.data;
+      let listData = nextList.data.data.map(item => {
+        item.estimated_pay_date = dayjs(item.estimated_pay_date).format("YYYY-MM-DD");
+        return item;
+      });
       this.setData({
         goodsList: fresh ? listData : this.data.goodsList.concat(listData),
         goodsListLoadStatus: 0,
@@ -202,7 +226,13 @@ Page({
       currentOrder: item
     })
     // todo 抢单，需要先判断是否已经登录，如果未登录，那么跳转到登录页面
-    if (userInfo.contact_number) {
+    if (!userInfo.service_point_id) {
+      wx.showToast({
+        title: "请扫描对应服务点二维码绑定服务点后重新进入小程序",
+        duration: 3000,
+        icon: 'none',
+      });
+    } else if (userInfo.contact_number) {
       // todo 正常逻辑
       this.setData({
         showWithInput: true

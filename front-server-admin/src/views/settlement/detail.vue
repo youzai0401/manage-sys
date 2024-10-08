@@ -33,7 +33,7 @@
           {{ scope.row.work_order_id }}
         </template>
       </el-table-column>
-      <el-table-column label="支付金额(元)" :width="180" align="center" :resizable="false">
+      <el-table-column label="支付金额（元）" :width="180" align="center" :resizable="false">
         <template slot-scope="scope">
           {{ scope.row.estimated_return_date }}
         </template>

@@ -1,0 +1,30 @@
+<view id="{{independentID}}" class="goods-card" bind:tap="clickHandle" data-goods="{{ goods }}">
+  <view class="goods-card__main">
+    <view class="card-title">
+      <view>订单名称</view>
+      <view>{{goods.order_name}}</view>
+    </view>
+    <t-divider />
+    <view class="card-item">
+      <view>生产单价</view>
+      <view>{{goods.worker_unit_price}}</view>
+    </view>
+    <view class="card-item">
+      <view>订单总量</view>
+      <view>{{goods.quantity}}</view>
+    </view>
+    <view class="card-item">
+      <view>剩余总量</view>
+      <view>{{goods.pending_num}}</view>
+    </view>
+    <view class="card-item">
+      <view>交付时间</view>
+      <view>{{goods.estimated_pay_date}}</view>
+    </view>
+    <view class="card-item">
+      <view>加工要求</view>
+      <view>{{goods.processing_requirements}}</view>
+    </view>
+    <view class="card-button" bind:click="clickHandle">抢单</view>
+  </view>
+</view>

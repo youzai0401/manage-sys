@@ -57,7 +57,7 @@
           {{ scope.row.unit_price }}
         </template>
       </el-table-column>
-      <el-table-column label="预计回货日期" width="100" align="center" :resizable="false">
+      <el-table-column label="预计回货日期" width="160" align="center" :resizable="false">
         <template slot-scope="scope">
           {{ scope.row.estimated_return_date }}
         </template>
@@ -67,17 +67,17 @@
           {{ scope.row.return_quantity }}
         </template>
       </el-table-column>
-      <el-table-column label="生产总价（元）" width="100" align="center" :resizable="false">
+      <el-table-column label="生产总价（元）" width="140" align="center" :resizable="false">
         <template slot-scope="scope">
           {{ scope.row.production_price }}
         </template>
       </el-table-column>
       <el-table-column label="当前状态" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.guideCount | validFilter }}
+          {{ scope.row.status | validFilter }}
         </template>
       </el-table-column>
-      <el-table-column label="物料说明" width="100" align="center" :resizable="false">
+      <el-table-column label="物料说明" min-width="200" align="center" :resizable="false">
         <template slot-scope="scope">
           {{ scope.row.material_description }}
         </template>
@@ -85,9 +85,9 @@
       <el-table-column fixed="right" align="center" prop="" label="操作" width="440" :resizable="false">
         <template slot-scope="scope">
           <div class="table-operation-content">
-            <el-button type="primary" plain size="mini" @click="dispatchOrder(scope.row, 'dispatch')">分配</el-button>
-            <el-button type="primary" plain size="mini" @click="dispatchOrder(scope.row, 'detail')">分配详情</el-button>
-            <el-button type="primary" plain size="mini" @click="cancelOrder(scope.row)">取消订单</el-button>
+            <el-button v-if="scope.row.status == 'UNASSIGNED'" type="primary" plain size="mini" @click="dispatchOrder(scope.row, 'dispatch')">分配</el-button>
+            <el-button v-if="scope.row.status === 'ASSIGNED' || scope.row.status === 'COMPLETED'" type="primary" plain size="mini" @click="dispatchOrder(scope.row, 'detail')">分配详情</el-button>
+            <el-button :disabled="scope.row.status === 'CANCELLED'" type="primary" plain size="mini" @click="cancelOrder(scope.row)">取消订单</el-button>
           </div>
         </template>
       </el-table-column>
@@ -96,25 +96,51 @@
       :current-page="currentPage"
       :page-size="pageSize"
       :page-sizes="[10, 15, 20, 30]"
-      layout="total, prev, pager, next, jumper"
+      layout="total, sizes, prev, pager, next, jumper"
       :total="total"
       class="pagination"
       @current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
     />
-    <DispatchOrderBox :show.sync="showDispatchOrder" :current-row-data="currentRowData" :current-type="currentType" />
+    <DispatchOrderBox :show.sync="showDispatchOrder" :current-row-data="currentRowData" :current-type="currentType" @success="handleImportSuccess" />
+    <ImportOrderBox :show.sync="showImportOrder" @success="handleImportSuccess" />
   </div>
 </template>
 
 <script>
 import DispatchOrderBox from './components/dispatchOrderBox'
+import ImportOrderBox from './components/importOrderBox'
 export default {
   name: 'Product',
   components: {
-    DispatchOrderBox
+    DispatchOrderBox,
+    ImportOrderBox
   },
   filters: {
     validFilter(val) {
-      return val === 1 ? '有效' : '无效'
+      // - UNASSIGNED：待分配
+      // - ASSIGNED：加工中
+      // - COMPLETED：已完成
+      // - CANCELLED：已取消
+      let text = ''
+      switch (val) {
+        case 'UNASSIGNED':
+          text = '待分配'
+          break
+        case 'ASSIGNED':
+          text = '加工中'
+          break
+        case 'COMPLETED':
+          text = '已完成'
+          break
+        case 'CANCELLED':
+          text = '已取消'
+          break
+        default :
+          text = '未知'
+      }
+
+      return text
     }
   },
   data() {
@@ -130,12 +156,14 @@ export default {
       currentProductId: '',
       currentProductName: '',
       showDispatchOrder: false,
+      showImportOrder: false,
       currentRowData: {},
       currentType: '',
       cityOptions: [],
       cityLoading: false,
       multipleSelection: [],
       currentPage: 1,
+      pageSize: 10,
       total: 0
     }
   },
@@ -144,16 +172,20 @@ export default {
   },
   methods: {
     handleAdd() {
-      this.$router.push({
-        path: '/product/addAndEditProduct',
-        query: {
-          type: 'add'
-        }
-      })
+      this.showImportOrder = true
+    },
+    handleImportSuccess() {
+      this.currentPage = 1
+      this.fetchData()
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`)
       this.currentPage = val
+      this.fetchData()
+    },
+    handleSizeChange(val) {
+      this.currentPage = 1
+      this.pageSize = val
       this.fetchData()
     },
     handleSelectionChange(val) {
@@ -165,7 +197,7 @@ export default {
       this.currentType = type
     },
     cancelOrder(rowData) {
-      this.$confirm('是否确定取消订单?', '提示', {
+      this.$confirm('服务点端分配的订单将被取消，是否确认取消?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -174,10 +206,17 @@ export default {
           url: `/orders/${rowData.order_id}`,
           method: 'delete'
         }).then(res => {
-          if (res.data.success) {
+          if (res.success) {
             this.$message({
               type: 'success',
               message: '订单已取消!'
+            })
+            this.currentPage = 1
+            this.fetchData()
+          } else {
+            this.$message({
+              type: 'warning',
+              message: res.message
             })
           }
         }).catch(() => {
@@ -196,27 +235,28 @@ export default {
         'page_size': this.pageSize
       }
 
-      this.list = [{
-        'order_id': 'int', // 订单ID
-        'order_number': 'string', // 订单编号
-        'order_name': 'string', // 订单名称
-        'product_code': 'string', // 产品编码
-        'total_quantity': 'int', // 订单总数量（生产总量）
-        'status': 'string', // 订单状态 英文枚举需要转成中文 所以都这样
-        'unit_price': 'decimal', // 单价
-        'estimated_return_date': 'date', // 预计回货时间
-        'unit': 'string', // 单位
-        'return_quantity': 'int', // 回货数量
-        'production_price': 'string', // 生成总价
-        'material_description': 'string'// 物料说明
-      }]
-      this.listLoading = false
-      return
+      // this.list = [{
+      //   'order_id': 'int', // 订单ID
+      //   'order_number': 'string', // 订单编号
+      //   'order_name': 'string', // 订单名称
+      //   'product_code': 'string', // 产品编码
+      //   'total_quantity': 'int', // 订单总数量（生产总量）
+      //   'status': 'string', // 订单状态 英文枚举需要转成中文 所以都这样
+      //   'unit_price': 'decimal', // 单价
+      //   'estimated_return_date': 'date', // 预计回货时间
+      //   'unit': 'string', // 单位
+      //   'return_quantity': 'int', // 回货数量
+      //   'production_price': 'string', // 生成总价
+      //   'material_description': 'string'// 物料说明
+      // }]
+      // this.listLoading = false
+      // return
 
-      this.$request({
-        url: '/orders',
-        method: 'get',
-        data: params
+      this.listLoading = true
+      this.$request.get('/orders', {
+        params: {
+          ...params
+        }
       }).then(res => {
         this.list = res?.data?.orders || []
         this.listLoading = false

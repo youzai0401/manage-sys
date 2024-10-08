@@ -1,0 +1,15 @@
+<view style="text-align: center; color: #b9b9b9" wx:if="{{pageLoading}}">
+  <t-loading theme="circular" size="40rpx" text="加载中..." inherit-color />
+</view>
+<view class="home-page-container">
+  <view wx:if="{{goodsList.length}}" class="goods-list-wrap wr-class" style="padding-top: 40rpx;">
+    <block wx:for="{{goodsList}}" wx:for-item="item" wx:key="index">
+      <order-card data="{{item}}" currency="{{item.currency || '¥'}}" thresholds="{{thresholds}}" class="goods-card-inside" data-index="{{index}}" />
+    </block>
+  </view>
+  <view style="height: 100vh;" wx:else>
+    <view style="padding-top: 50%;text-align: center;">暂无相关数据</view>
+  </view>
+  <load-more list-is-empty="{{!goodsList.length}}" status="{{goodsListLoadStatus}}" bind:retry="onReTry" />
+  <t-toast id="t-toast" />
+</view>

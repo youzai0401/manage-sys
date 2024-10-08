@@ -1,0 +1,14 @@
+<view style="text-align: center; color: #b9b9b9;" wx:if="{{pageLoading}}">
+  <t-loading theme="circular" size="40rpx" text="加载中..." inherit-color />
+</view>
+<view class="home-page-container" style="min-height: 80vh;">
+  <goods-list wr-class="goods-list-container" goodsList="{{goodsList}}" bind:click="goodListClickHandle" />
+  <load-more list-is-empty="{{!goodsList.length}}" status="{{goodsListLoadStatus}}" bind:retry="onReTry" />
+  <t-toast id="t-toast" />
+</view>
+<t-dialog visible="{{showWithInput}}" title="选择抢单量" confirm-btn="确定" cancel-btn="取消" bind:confirm="handleClaimOrder" bind:cancel="closeDialog">
+  <view slot="content">
+    <t-stepper style="display: flex; justify-content: center; margin-top: 40rpx;" value="{{claimValue}}" size="large" theme="filled" step="100" max="1000000000000" bind:change="handleClaimValueChange" />
+  </view>
+
+</t-dialog>

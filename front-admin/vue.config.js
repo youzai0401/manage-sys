@@ -38,20 +38,13 @@ module.exports = {
     },
     // before: require('./mock/mock-server.js'),
     proxy: {
-      '/manage': {
-        target: 'http://106.14.106.216:7070', // 请求的第三方接口地址
+      '/api': {
+        target: 'http://117.50.221.18:8081', // 请求的第三方接口地址
         changeOrigin: true, // 请求跨域时，需配置此项
         pathRewrite: { // 路径重写,替换target中的请求地址
           '^/': '/'
         }
       },
-      '/upload': {
-        target: 'http://106.14.106.216:7080', // 请求的第三方接口地址
-        changeOrigin: true, // 请求跨域时，需配置此项
-        pathRewrite: { // 路径重写,替换target中的请求地址
-          '^/': '/'
-        }
-      }
     }
   },
   configureWebpack: {

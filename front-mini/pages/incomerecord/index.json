@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "收款记录",
+  "onReachBottomDistance": 10,
+  "backgroundTextStyle": "light",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "t-loading": "tdesign-miniprogram/loading/loading",
+    "load-more": "/components/load-more/index",
+    "income-card": "/components/income-card/index"
+  }
+}

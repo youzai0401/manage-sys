@@ -1,0 +1,48 @@
+.goods-card {
+  box-sizing: border-box;
+  font-size: 24rpx;
+  border-radius: 0 0 16rpx 16rpx;
+  border-bottom: none;
+}
+
+.t-cell-group--card {
+  width: 100%;
+}
+
+.goods-card__main {
+  position: relative;
+  /* display: flex; */
+  padding: 20rpx 20rpx 0 20rpx;
+  line-height: 1;
+  background: transparent;
+  width: 670rpx;
+  border-radius: 0 0 16rpx 16rpx;
+  /* align-items: center; */
+  /* justify-content: center; */
+  margin-bottom: 16rpx;
+  padding-bottom: 12rpx;
+  background-color: #ffffff;
+}
+
+.card-title {
+  display: flex;
+  justify-content: space-between;
+  font-size: 28rpx;
+}
+
+.card-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+  font-size: 28rpx;
+}
+
+.card-item :first-child {
+  width: 140rpx;
+  margin-right: 20rpx;
+}
+
+.card-item :last-child {
+  flex: 1;
+  text-align: right;
+}

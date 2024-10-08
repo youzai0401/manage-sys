@@ -1,0 +1,14 @@
+{
+  "navigationBarTitleText": "首页",
+  "onReachBottomDistance": 10,
+  "backgroundTextStyle": "light",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "t-loading": "tdesign-miniprogram/loading/loading",
+    "goods-list": "/components/goods-list/index",
+    "load-more": "/components/load-more/index",
+    "t-dialog": "tdesign-miniprogram/dialog/dialog",
+    "t-stepper": "tdesign-miniprogram/stepper/stepper",
+    "t-input": "tdesign-miniprogram/input/input"
+  }
+}

@@ -89,13 +89,20 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/settlement/settlementManage',
     name: 'settlement',
-    meta: { title: '月度账单管理', icon: 'el-icon-s-help' },
+    meta: { title: '财务管理', icon: 'el-icon-s-help' },
     children: [
       {
         path: 'settlementManage',
         name: 'settlementManage',
         component: () => import('@/views/settlement/index'),
         meta: { title: '月度账单管理', icon: 'table' }
+      },
+      {
+        path: 'settlementManageDetail',
+        name: 'settlementManageDetail',
+        component: () => import('@/views/settlement/detail'),
+        meta: { title: '账单明细', icon: 'table' },
+        hidden: true
       }
     ]
   },

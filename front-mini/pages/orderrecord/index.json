@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "工单记录",
+  "onReachBottomDistance": 10,
+  "backgroundTextStyle": "light",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "t-loading": "tdesign-miniprogram/loading/loading",
+    "load-more": "/components/load-more/index",
+    "order-card": "/components/order-card/index"
+  }
+}

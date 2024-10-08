@@ -1,0 +1,17 @@
+<view class="person-info">
+  <t-cell-group>
+    <t-cell title="头像" center="{{true}}" data-type="avatarUrl" bind:click="onClickCell" arrow t-class-left="order-group__left">
+      <!-- <button slot="note" class="avatar" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+        <t-image src="{{userInfo.avatarUrl}}" t-class="avatar-img" mode="aspectFill" />
+      </button> -->
+      <view slot="note">
+        <t-image wx:if="{{userInfo.avatar_url}}" t-class="avatar-img" src="{{userInfo.avatar_url}}" mode="aspectFill" />
+        <t-image wx:else t-class="avatar-img" src="../../../images/avatar.png" mode="aspectFill"></t-image>
+      </view>
+
+    </t-cell>
+    <t-cell title="昵称" arrow note="{{userInfo.name || '微信用户'}}" data-type="name" bind:click="onClickCell" t-class="t-cell-class" t-class-left="order-group__left" />
+    <t-cell bordered="{{false}}" title="手机号" arrow note="{{phone}}" data-type="phoneNumber" bind:click="onClickCell" t-class="t-cell-class" t-class-left="order-group__left" />
+  </t-cell-group>
+</view>
+<t-toast id="t-toast" />

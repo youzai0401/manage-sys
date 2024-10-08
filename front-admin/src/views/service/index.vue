@@ -60,12 +60,13 @@
       :current-page="currentPage"
       :page-size="pageSize"
       :page-sizes="[10, 15, 20, 30]"
-      layout="total, prev, pager, next, jumper"
+      layout="total, sizes, prev, pager, next, jumper"
       :total="total"
       class="pagination"
       @current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
     />
-    <editBox :show.sync="showEditBox" :current-row-data="currentRowData" />
+    <editBox :show.sync="showEditBox" :current-row-data="currentRowData" @success="handleSuccess" />
   </div>
 </template>
 
@@ -99,6 +100,7 @@ export default {
       cityLoading: false,
       multipleSelection: [],
       currentPage: 1,
+      pageSize: 10,
       total: 0
     }
   },
@@ -106,6 +108,10 @@ export default {
     this.fetchData()
   },
   methods: {
+    handleSuccess() {
+      this.currentPage = 1
+      this.fetchData()
+    },
     handleAdd() {
       this.showEditBox = true
       this.currentRowData = {}
@@ -113,6 +119,11 @@ export default {
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`)
       this.currentPage = val
+      this.fetchData()
+    },
+    handleSizeChange(val) {
+      this.currentPage = 1
+      this.pageSize = val
       this.fetchData()
     },
     handleSelectionChange(val) {
@@ -132,11 +143,14 @@ export default {
           url: `/service_points/${rowData.service_point_id}`,
           method: 'delete'
         }).then(res => {
-          if (res.data.success) {
+          if (res.success) {
             this.$message({
               type: 'success',
               message: '已删除!'
             })
+            this.handleSuccess()
+          } else {
+            this.$message.error(res.message || '删除失败')
           }
         }).catch(() => {
         })
@@ -154,24 +168,25 @@ export default {
         'page_size': this.pageSize
       }
 
-      this.list = [{
-        'service_point_id': 'int', // 服务点ID
-        'name': 'string', // 服务点名称
-        'manager_name': 'string', // 负责人姓名
-        'contact_number': 'string', // 联系电话
-        'address': 'string', // 详细地址
-        'type': 'string', // 类型（直营店、非直营店）
-        'is_salary_managed': 'boolean'// 是否代结工资
-      }]
-      this.listLoading = false
-      return
+      // this.list = [{
+      //   'service_point_id': 'int', // 服务点ID
+      //   'name': 'string', // 服务点名称
+      //   'manager_name': 'string', // 负责人姓名
+      //   'contact_number': 'string', // 联系电话
+      //   'address': 'string', // 详细地址
+      //   'type': 'string', // 类型（直营店、非直营店）
+      //   'is_salary_managed': 'boolean'// 是否代结工资
+      // }]
+      // this.listLoading = false
+      // return
 
+      this.listLoading = true
       this.$request({
         url: '/service_points',
         method: 'get',
         data: params
       }).then(res => {
-        this.list = res?.data?.service_points || []
+        this.list = res?.data?.data || []
         this.listLoading = false
         this.total = res?.data?.total
       }).catch(err => {

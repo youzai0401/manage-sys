@@ -1,0 +1,25 @@
+<!--components/sort-card.wxml-->
+<view style="min-height: 80vh;" wx:if="{{list.length}}">
+  <view class="card-header">
+    header
+  </view>
+  <view class="card-content">
+    <view class="content-title">
+      <text>排名</text>
+      <text>姓名</text>
+      <text>数量</text>
+    </view>
+    <view>
+      <block wx:for="{{list}}" wx:for-item="item" wx:key="index">
+        <view class="content-item">
+          <text>{{item.rank}}</text>
+          <text>{{item.name}}</text>
+          <text>{{item.total_completed_quantity}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+</view>
+<view wx:else style="min-height: 80vh;">
+  <view style="padding-top: 50%;text-align: center;">暂无相关数据</view>
+</view>

@@ -23,13 +23,18 @@
           </el-form-item>
         </el-form>
         <p>选择服务点及分配数量</p>
+        <p>订单总价预估：{{ assignments_total_price }} 元</p>
         <div v-for="(item,index) in assignments" :key="item" style="display: flex;align-items: center;margin-bottom: 10px">
           <el-select
             v-model="item.service_point_id"
+            filterable
+            remote
+            clearable
             :remote-method="remoteMethod"
             :loading="selectLoading"
             style="flex: 2"
             placeholder="请选择"
+            :disabled="currentType === 'detail'"
           >
             <el-option
               v-for="item in serverOption"
@@ -38,11 +43,11 @@
               :value="item.service_point_id"
             />
           </el-select>
-          <el-input v-model.number="item.quantity" style="flex: 1.2" placeholder="请填写分配数量" />
-          <el-input v-model.number="item.worker_unit_price" style="flex: 2" placeholder="请输入报价，单位：元">
+          <el-input v-model.number="item.quantity" :disabled="currentType === 'detail'" style="flex: 1.2; margin: 0 10px" placeholder="请填写分配数量" />
+          <el-input v-model.number="item.worker_unit_price" :disabled="currentType === 'detail'" style="flex: 2" placeholder="请输入报价，单位：元">
             <template slot="append">元</template>
           </el-input>
-          <div style="width: 70px">
+          <div v-if="currentType !== 'detail'" style="width: 70px">
             <i v-if="index+1 === assignments.length" style="font-size: 30px" class="el-icon-circle-plus-outline" @click="handleAdd" />
             <i v-if="assignments.length !== 1" style="font-size: 30px" class="el-icon-remove-outline" @click="handleDel(index)" />
           </div>
@@ -116,6 +121,19 @@ export default {
       set(val) {
         this.$emit('update:show', val)
       }
+    },
+    assignments_total_price() {
+      let total = 0
+      if (this.assignments.length) {
+        this.assignments.forEach(item => {
+          if (item.quantity * item.worker_unit_price) {
+            total += item.quantity * item.worker_unit_price
+          }
+        })
+        return total
+      } else {
+        return 0
+      }
     }
   },
   watch: {
@@ -140,31 +158,34 @@ export default {
         {
           assignments: this.assignments
         }).then(res => {
-        const { data } = res
-        if (data.success) {
+        if (res.success) {
           this.$message.success('订单分配成功')
+          this.showDialog = false
+          this.$emit('success')
+        } else {
+          this.$message.error(res.message)
         }
       })
     },
     remoteMethod(query) {
-      if (query !== '') {
-        this.searchLoading = true
-        // 请求
-        const url = '/service_points'
-        const params = {
-          'name': query // 必传
-        }
-        this.$request.get(url, params).then(res => {
-          if (res) {
-            this.serverOption = res.data.service_points
-          }
-          this.selectLoading = false
-        }).catch(() => {
-          this.selectLoading = false
-        })
-      } else {
-        this.serverOption = []
+      // if (query !== '') {
+      this.searchLoading = true
+      // 请求
+      const url = '/service_points'
+      const params = {
+        'name': query // 必传
       }
+      this.$request.get(url, params).then(res => {
+        if (res) {
+          this.serverOption = res.data.data
+        }
+        this.selectLoading = false
+      }).catch(() => {
+        this.selectLoading = false
+      })
+      // } else {
+      //   this.serverOption = []
+      // }
     },
     handleDel(index) {
       this.assignments.splice(index, 1)
@@ -177,7 +198,9 @@ export default {
             this.assignments = data.assignments
           }
         })
+        this.remoteMethod('')
       } else {
+        this.remoteMethod('')
         this.assignments = [
           {
             'service_point_id': '', // 服务点ID

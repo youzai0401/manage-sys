@@ -1,0 +1,10 @@
+<view class="wrap">
+  <t-tabs defaultValue="{{0}}" bind:change="onTabsChange" bind:click="onTabsClick" t-class="custom-tabs" t-class-content="custom-panel">
+    <t-tab-panel label="上月个人排行" value="0" style="{{tabPanelstyle}}">
+      <sort-card data="{{personalList}}"></sort-card>
+    </t-tab-panel>
+    <t-tab-panel label="上月服务点排行" value="1" style="{{tabPanelstyle}}">
+      <sort-card></sort-card>
+    </t-tab-panel>
+  </t-tabs>
+</view>

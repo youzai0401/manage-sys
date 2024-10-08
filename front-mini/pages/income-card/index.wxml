@@ -1,0 +1,33 @@
+<view id="{{independentID}}" class="goods-card" bind:tap="clickHandle" data-goods="{{ goods }}">
+  <view class="goods-card__main">
+    <view class="card-title">
+      <view>UBUNG 木色 108mm烟管</view>
+      <view>+666.66</view>
+    </view>
+    <t-divider />
+    <view class="card-item">
+      <view>账单ID</view>
+      <view>0.04元</view>
+    </view>
+    <view class="card-item">
+      <view>交易单号</view>
+      <view>0.04元</view>
+    </view>
+    <view class="card-item">
+      <view>当前状态</view>
+      <view>2000</view>
+    </view>
+    <view class="card-item">
+      <view>交付时间</view>
+      <view>2024年 8月 20日</view>
+    </view>
+    <view class="card-item">
+      <view>奖励或扣款</view>
+      <view>2000</view>
+    </view>
+    <view class="card-item">
+      <view>原因</view>
+      <view>前三</view>
+    </view>
+  </view>
+</view>

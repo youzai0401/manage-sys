@@ -6,12 +6,12 @@
         <img src="../../assets/images/logo.png" alt="">
       </div>
       <el-form ref="loginForm" :model="loginForm" label-width="60px" :rules="loginRules" class="login-form" auto-complete="on">
-        <el-form-item label="账号" prop="username">
+        <el-form-item label="账号" prop="contact_number">
           <!--          <el-input-->
-          <!--            ref="username"-->
-          <!--            v-model="loginForm.username"-->
+          <!--            ref="contact_number"-->
+          <!--            v-model="loginForm.contact_number"-->
           <!--            placeholder="请输入手机号"-->
-          <!--            name="username"-->
+          <!--            name="contact_number"-->
           <!--            type="text"-->
           <!--            tabindex="1"-->
           <!--            auto-complete="on"-->
@@ -26,10 +26,10 @@
           <!--            </el-select>-->
           <!--          </el-input>-->
           <el-input
-            ref="username"
-            v-model="loginForm.username"
+            ref="contact_number"
+            v-model="loginForm.contact_number"
             placeholder="请输入账号"
-            name="username"
+            name="contact_number"
             type="text"
             tabindex="1"
             auto-complete="on"
@@ -60,18 +60,20 @@
 </template>
 
 <script>
+import { setToken } from '@/utils/auth'
+
 export default {
   name: 'Login',
   data() {
     return {
       loginForm: {
         phoneArea: '86',
-        username: '',
+        contact_number: '',
         code: '',
         password: ''
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', message: '请输入手机号' }],
+        contact_number: [{ required: true, trigger: 'blur', message: '请输入手机号' }],
         password: [{ required: true, trigger: 'blur', message: '请输入密码' }]
       },
       loading: false,
@@ -104,7 +106,7 @@ export default {
         if (valid) {
           this.loading = true
           const params = {
-            'username': this.loginForm.username,
+            'contact_number': this.loginForm.contact_number,
             'password': this.loginForm.password
           }
           this.$request({
@@ -113,9 +115,10 @@ export default {
             data: params
           }).then(res => {
             // 登录成功
-            if (res?.code === 10000) {
-              sessionStorage.setItem('userInfo', JSON.stringify(res.data))
-              this.$router.push({ path: this.redirect || '/product/poiManage' })
+            if (res?.data) {
+              sessionStorage.setItem('userInfo', JSON.stringify(res.data.user))
+              setToken(res.data.token)
+              this.$router.push({ path: this.redirect || '/dashboard' })
             }
             this.loading = false
             // 获取用户信息

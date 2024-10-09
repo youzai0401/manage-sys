@@ -35,7 +35,7 @@
       </el-table-column>
       <el-table-column label="支付金额（元）" :width="180" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.estimated_return_date }}
+          {{ scope.row.payment_amount }}
         </template>
       </el-table-column>
       <el-table-column label="收款人" :width="180" align="center" :resizable="false">
@@ -50,37 +50,37 @@
       </el-table-column>
       <el-table-column label="支付时间" width="160" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.payment_date }}
+          {{ scope.row.payment_date ? $dayjs(scope.row.payment_date).format('YYYY-MM-DD') : '/' }}
         </template>
       </el-table-column>
       <el-table-column label="交易单号" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.transaction_number }}
+          {{ scope.row.transaction_number || '/' }}
         </template>
       </el-table-column>
       <el-table-column label="奖励（元）" min-width="100" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.reward_salary }}
+          {{ scope.row.reward_salary || '/' }}
         </template>
       </el-table-column>
       <el-table-column label="奖励原因" :min-width="180" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.reward_reason }}
+          {{ scope.row.reward_reason || '/' }}
         </template>
       </el-table-column>
       <el-table-column label="扣款（元）" min-width="100" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.deduction_salary }}
+          {{ scope.row.deduction_salary || '/' }}
         </template>
       </el-table-column>
       <el-table-column label="扣款原因" :min-width="180" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.deduction_reason }}
+          {{ scope.row.deduction_reason || '/' }}
         </template>
       </el-table-column>
       <el-table-column label="当前状态" min-width="200" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.payment_status }}
+          {{ scope.row.payment_status || '/' }}
         </template>
       </el-table-column>
     </el-table>
@@ -227,7 +227,7 @@ export default {
           ...params
         }
       }).then(res => {
-        this.list = res?.data?.payment_orders.data || []
+        this.list = res?.data?.data || []
         this.listLoading = false
         this.total = res?.data?.total
       }).catch(err => {

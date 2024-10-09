@@ -78,7 +78,9 @@
       </el-table-column>
       <el-table-column label="物料说明" min-width="200" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.material_description }}
+          <div style="text-align: left; white-space: break-spaces;">
+            {{ scope.row.material_description }}
+          </div>
         </template>
       </el-table-column>
       <el-table-column fixed="right" align="center" prop="" label="操作" width="440" :resizable="false">
@@ -143,10 +145,12 @@ export default {
       multipleSelection: [],
       currentPage: 1,
       pageSize: 10,
-      total: 0
+      total: 0,
+      userInfo: {}
     }
   },
   created() {
+    this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
     this.fetchData()
   },
   methods: {
@@ -251,7 +255,8 @@ export default {
       this.listLoading = true
       const params = {
         'page': this.currentPage,
-        'page_size': this.pageSize
+        'page_size': this.pageSize,
+        service_point_id: this.userInfo.service_point_id
       }
 
       // this.list = [{
@@ -273,10 +278,10 @@ export default {
       // this.listLoading = false
       // return
       this.listLoading = true
-      this.$request({
-        url: '/work_orders',
-        method: 'get',
-        data: params
+      this.$request.get('/work_orders', {
+        params: {
+          ...params
+        }
       }).then(res => {
         this.list = res?.data?.data || []
         this.listLoading = false

@@ -96,10 +96,12 @@ export default {
       multipleSelection: [],
       currentPage: 1,
       pageSize: 10,
-      total: 0
+      total: 0,
+      userInfo: {}
     }
   },
   created() {
+    this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
     this.fetchData()
   },
   methods: {
@@ -153,7 +155,8 @@ export default {
       this.listLoading = true
       const params = {
         'page': this.currentPage,
-        'page_size': this.pageSize
+        'page_size': this.pageSize,
+        service_point_id: this.userInfo.service_point_id
       }
 
       // this.list = [{
@@ -168,10 +171,10 @@ export default {
       // this.listLoading = false
       // return
       this.listLoading = true
-      this.$request({
-        url: '/workers',
-        method: 'get',
-        data: params
+      this.$request.get('/workers', {
+        params: {
+          ...params
+        }
       }).then(res => {
         this.list = res?.data?.data || []
         this.listLoading = false

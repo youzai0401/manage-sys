@@ -49,17 +49,17 @@
       </el-table-column>
       <el-table-column label="回货总量" min-width="100" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.actual_return_quantity }}
+          {{ scope.row.actual_return_quantity || '/' }}
         </template>
       </el-table-column>
       <el-table-column label="预计回货日期" min-width="160" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.estimated_return_date }}
+          {{ $dayjs(scope.row.estimated_return_date).format('YYYY-MM-DD') }}
         </template>
       </el-table-column>
       <el-table-column label="实际回货日期" min-width="200" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.actual_return_date }}
+          {{ scope.row.actual_return_date ? $dayjs(scope.row.actual_return_date).format('YYYY-MM-DD') : '/' }}
         </template>
       </el-table-column>
       <el-table-column label="单位（元）" :min-width="180" align="center" :resizable="false">
@@ -226,7 +226,7 @@ export default {
       const params = {
         'page': this.currentPage,
         'page_size': this.pageSize,
-        status: 'PUBLISHED',
+        status: 'COMPLETED',
         service_point_id: this.userInfo.service_point_id
       }
 

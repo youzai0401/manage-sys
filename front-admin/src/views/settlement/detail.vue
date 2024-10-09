@@ -35,12 +35,12 @@
       </el-table-column>
       <el-table-column label="预计回货日期" :width="180" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.estimated_return_date }}
+          {{ $dayjs(scope.row.estimated_return_date).format('YYYY-MM-DD') }}
         </template>
       </el-table-column>
       <el-table-column label="实际回货日期" width="160" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.actual_return_date }}
+          {{ scope.row.actual_return_date ? $dayjs(scope.row.actual_return_date).format('YYYY-MM-DD') : "/" }}
         </template>
       </el-table-column>
       <el-table-column label="分配总量" width="100" align="center" :resizable="false">
@@ -221,7 +221,7 @@ export default {
           ...params
         }
       }).then(res => {
-        this.list = res?.data?.payment_orders || []
+        this.list = res?.data?.payment_orders.data || []
         this.listLoading = false
         this.total = res?.data?.total
       }).catch(err => {

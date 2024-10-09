@@ -7,6 +7,7 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
+          <p style="display: inline-block; margin: 0 10px;padding: 0;vertical-align: top">{{ userInfo.manager_name }}</p>
           <img src="../../assets/images/avatar.png" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
@@ -38,6 +39,15 @@ export default {
       'sidebar',
       'avatar'
     ])
+  },
+  data() {
+    return {
+      userInfo: {}
+    }
+  },
+  created() {
+    this.userInfo = sessionStorage.getItem('userInfo')
+    this.userInfo = JSON.parse(this.userInfo)
   },
   methods: {
     toggleSideBar() {

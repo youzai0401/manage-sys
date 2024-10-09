@@ -44,7 +44,7 @@
             />
           </el-select>
           <el-input v-model.number="item.quantity" :disabled="currentType === 'detail'" style="flex: 1.2; margin: 0 10px" placeholder="请填写分配数量" />
-          <el-input v-model.number="item.worker_unit_price" :disabled="currentType === 'detail'" style="flex: 2" placeholder="请输入报价，单位：元">
+          <el-input v-model="item.worker_unit_price" type="number" :disabled="currentType === 'detail'" style="flex: 2" placeholder="请输入报价，单位：元">
             <template slot="append">元</template>
           </el-input>
           <div v-if="currentType !== 'detail'" style="width: 70px">

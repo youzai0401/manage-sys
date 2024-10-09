@@ -228,7 +228,7 @@ export default {
           ...params
         }
       }).then(res => {
-        this.list = res?.data?.payment_orders || []
+        this.list = res?.data?.payment_orders.data || []
         this.listLoading = false
         this.total = res?.data?.total
       }).catch(err => {

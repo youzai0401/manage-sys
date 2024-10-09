@@ -2,8 +2,8 @@
   <div class="login-container">
     <div class="login-content">
       <div class="title-container">
-        <!--        <h3 class="title">综合管理系统</h3>-->
-        <img src="../../assets/images/logo.png" alt="">
+        <h3 class="title">CONE小工单系统</h3>
+        <!--        <img src="../../assets/images/logo.png" alt="">-->
       </div>
       <el-form ref="loginForm" :model="loginForm" label-width="60px" :rules="loginRules" class="login-form" auto-complete="on">
         <el-form-item label="账号" prop="contact_number">
@@ -99,7 +99,7 @@ export default {
             if (res?.data) {
               sessionStorage.setItem('userInfo', JSON.stringify(res.data.user))
               setToken(res.data.token)
-              this.$router.push({ path: this.redirect || '/dashboard' })
+              this.$router.push({ path: this.redirect || '/order/orderList' })
             } else {
               this.$message.error(res.message)
             }
@@ -134,33 +134,13 @@ $cursor: #fff;
 
 /* reset element-ui css */
 .login-container {
-  background-image: url("../../assets/images/login_bg.png");
+  background-image: url("../../assets/images/img.png");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 50%;
+  //background: aliceblue;
   position: relative;
   font-family: PingFangSC-Regular, PingFang SC;
-
-  //.el-input {
-  //  //display: inline-block;
-  //  height: 56px;
-  //  color: #111113;
-  //
-  //  input {
-  //    background: transparent;
-  //    border: 0px;
-  //    -webkit-appearance: none;
-  //    border-radius: 0px;
-  //    //padding: 12px 5px 12px 15px;
-  //    height: 56px;
-  //  }
-  //}
-  //.el-input-group__append, .el-input-group__prepend {
-  //  border: none;
-  //}
-  //.el-select {
-  //  border: none;
-  //}
 
   .el-form-item {
     margin: 30px auto 0 auto;
@@ -179,14 +159,14 @@ $light_gray:#eee;
 .login-container {
   min-height: 100%;
   width: 100%;
-  background-color: #ffffff;
+  //background-color: #ffffff;
   overflow: hidden;
+  display: flex;
+  align-items: center;
 
   .login-content {
-    position: absolute;
     width: 490px;
-    top: 15%;
-    right: 18%;
+    margin: 0 auto;
   }
 
   .login-type-container {
@@ -245,7 +225,7 @@ $light_gray:#eee;
 
     .title {
       font-size: 26px;
-      color: #eee;
+      color: #fff;
       margin: 0px auto 40px auto;
       text-align: center;
       font-weight: bold;

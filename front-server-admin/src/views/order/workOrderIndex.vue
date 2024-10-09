@@ -49,7 +49,7 @@
       </el-table-column>
       <el-table-column label="工单状态" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === '待取料'" type="warning">{{ scope.row.status }}</el-tag>
+          <el-tag v-if="scope.row.status === '待领取'" type="warning">{{ scope.row.status }}</el-tag>
           <el-tag v-if="scope.row.status === '加工中'" type="info">{{ scope.row.status }}</el-tag>
           <el-tag v-if="scope.row.status === '已交付'">{{ scope.row.status }}</el-tag>
           <el-tag v-if="scope.row.status === '已完成'" type="success">{{ scope.row.status }}</el-tag>

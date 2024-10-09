@@ -198,7 +198,6 @@ export default {
       const params = {
         'page': this.currentPage,
         'page_size': this.pageSize,
-        order_id: this.queryData.order_id,
         assignment_id: this.queryData.assignment_id,
         service_point_id: this.queryData.service_point_id
       }

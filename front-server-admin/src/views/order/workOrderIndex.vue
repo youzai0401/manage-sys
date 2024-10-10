@@ -32,6 +32,11 @@
           {{ scope.row.receiver_quantity }}
         </template>
       </el-table-column>
+      <el-table-column label="单位" width="100" align="center" :resizable="false">
+        <template slot-scope="scope">
+          {{ scope.row.unit }}
+        </template>
+      </el-table-column>
       <el-table-column label="领取时间" width="160" align="center" :resizable="false">
         <template slot-scope="scope">
           {{ scope.row.material_pickup_date ? $dayjs(scope.row.material_pickup_date).format('YYYY-MM-DD') : "-" }}

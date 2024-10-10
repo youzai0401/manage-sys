@@ -178,16 +178,14 @@ export default {
       })
     },
     handleConfirm(rowData) {
-      this.$confirm('请确认订单结算金额无误后点击结算按钮。\n' +
-        '\n' +
-        '其中:\n' +
-        '\n' +
-        '1.直营点及代发工资的非直营点会在账期结束后自动给工人结算工资。\n' +
-        '\n' +
-        '2.非直营点的服务点余额需要线下手动打款进行结算。', '结算确认', {
+      this.$alert('<div>' +
+        '<p>请确认订单结算金额无误后点击结算按钮。</p>' +
+        '<p>其中:。</p>' +
+        '<p>1.直营点及代发工资的非直营点会在账期结束后自动给工人结算工资。</p>' +
+        '<p>2.非直营点的服务点余额需要线下手动打款进行结算。</p>', '结算确认', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
+        dangerouslyUseHTMLString: true
       }).then(() => {
         this.$request({
           url: `/orders/${rowData.order_id}/settlement`,

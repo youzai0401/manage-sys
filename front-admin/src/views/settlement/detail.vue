@@ -148,41 +148,6 @@ export default {
     goDetail() {
 
     },
-    handleConfirm(rowData) {
-      this.$confirm('请确认订单结算金额无误后点击结算按钮。\n' +
-        '\n' +
-        '其中:\n' +
-        '\n' +
-        '1.直营点及代发工资的非直营点会在账期结束后自动给工人结算工资。\n' +
-        '\n' +
-        '2.非直营点的服务点余额需要线下手动打款进行结算。', '结算确认', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$request({
-          url: '/monthly_statements/settlement',
-          method: 'post',
-          data: {
-            month: rowData.month,
-            service_point_id: rowData.service_point_id
-          }
-        }).then(res => {
-          if (res.data.success) {
-            this.$message({
-              type: 'success',
-              message: res.data.message
-            })
-          }
-        }).catch(() => {
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消'
-        })
-      })
-    },
     handleSizeChange(val) {
       this.currentPage = 1
       this.pageSize = val

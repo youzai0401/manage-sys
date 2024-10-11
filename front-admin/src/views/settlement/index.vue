@@ -59,12 +59,12 @@
       </el-table-column>
       <el-table-column label="预计回货日期" min-width="160" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.estimated_return_date }}
+          {{ $dayjs(scope.row.estimated_return_date).format('YYYY-MM-DD') }}
         </template>
       </el-table-column>
       <el-table-column label="实际回货日期" min-width="200" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.actual_return_date }}
+          {{ scope.row.actual_return_date ? $dayjs(scope.row.actual_return_date).format('YYYY-MM-DD') : '/' }}
         </template>
       </el-table-column>
       <el-table-column label="生产总价（元）" min-width="200" align="center" :resizable="false">
@@ -178,16 +178,14 @@ export default {
       })
     },
     handleConfirm(rowData) {
-      this.$confirm('请确认订单结算金额无误后点击结算按钮。\n' +
-        '\n' +
-        '其中:\n' +
-        '\n' +
-        '1.直营点及代发工资的非直营点会在账期结束后自动给工人结算工资。\n' +
-        '\n' +
-        '2.非直营点的服务点余额需要线下手动打款进行结算。', '结算确认', {
+      this.$alert('<div>' +
+        '<p>请确认订单结算金额无误后点击结算按钮。</p>' +
+        '<p>其中:。</p>' +
+        '<p>1.直营点及代发工资的非直营点会在账期结束后自动给工人结算工资。</p>' +
+        '<p>2.非直营点的服务点余额需要线下手动打款进行结算。</p>', '结算确认', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
+        dangerouslyUseHTMLString: true
       }).then(() => {
         this.$request({
           url: `/orders/${rowData.order_id}/settlement`,

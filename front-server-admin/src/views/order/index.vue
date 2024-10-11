@@ -84,7 +84,9 @@
       </el-table-column>
       <el-table-column label="物料说明" min-width="200" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.material_description }}
+          <div style="text-align: left; white-space: break-spaces;">
+            {{ scope.row.material_description }}
+          </div>
         </template>
       </el-table-column>
       <el-table-column fixed="right" align="center" prop="" label="操作" width="220" :resizable="false">

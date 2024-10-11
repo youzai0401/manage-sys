@@ -14,10 +14,10 @@
             <span>{{ currentRowData.order_name }}</span>
           </el-form-item>
           <el-form-item label="生产总量">
-            <span>{{ currentRowData.quantity }}</span>
+            <span>{{ currentRowData.quantity }} {{ currentRowData.unit }}</span>
           </el-form-item>
           <el-form-item label="生产总价">
-            <span>{{ currentRowData.assignments_total_price }}</span>
+            <span>{{ currentRowData.assignments_total_price }} （元）</span>
           </el-form-item>
           <el-form-item label="回货日期">
             <span>{{ $dayjs(currentRowData.estimated_return_date).format('YYYY-MM-DD') }}</span>

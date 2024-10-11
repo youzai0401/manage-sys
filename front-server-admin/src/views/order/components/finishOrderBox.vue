@@ -10,7 +10,7 @@
       <div class="log-info__content">
         <el-form ref="formData" :inline="false" :model="formData" :rules="formDataRules" label-width="120px">
           <el-form-item label="计划回货量">
-            <span>{{ currentRowData.receiver_quantity }}</span>
+            <span>{{ currentRowData.receiver_quantity }} {{ currentRowData.unit }}</span>
           </el-form-item>
           <el-form-item label="结算单价">
             <span>{{ currentRowData.worker_unit_price }} （元）</span>
@@ -30,22 +30,22 @@
             </el-form-item>
             <template v-if="reward_type === '1'">
               <el-form-item label="额外奖励" prop="reward_salary">
-                <el-input v-model.number="formData.reward_salary" placeholder="请填写奖励金额（元）"><span slot="suffix">/元</span></el-input>
+                <el-input v-model="formData.reward_salary" type="number" placeholder="请填写奖励金额（元）"><span slot="suffix">/元</span></el-input>
               </el-form-item>
               <el-form-item label="额外奖励原因" prop="reward_reason">
-                <el-input v-model="formData.reward_reason" placeholder="请填写奖励原因"><span slot="suffix">/元</span></el-input>
+                <el-input v-model="formData.reward_reason" placeholder="请填写奖励原因" />
               </el-form-item>
             </template>
             <template v-if="reward_type === '2'">
               <el-form-item label="额外扣款" prop="deduction_salary">
-                <el-input v-model.number="formData.deduction_salary" placeholder="请填写扣款金额（元）"><span slot="suffix">/元</span></el-input>
+                <el-input v-model="formData.deduction_salary" type="number" placeholder="请填写扣款金额（元）"><span slot="suffix">/元</span></el-input>
               </el-form-item>
               <el-form-item label="额外扣款原因" prop="deduction_reason">
-                <el-input v-model="formData.deduction_reason" placeholder="请填写扣款原因"><span slot="suffix">/元</span></el-input>
+                <el-input v-model="formData.deduction_reason" placeholder="请填写扣款原因" />
               </el-form-item>
             </template>
             <el-form-item label="预计发放工资为">
-              <span style="color: red; font-size: 16px">todo 待补充逻辑{{ formData.actual_salary }} 元</span>
+              <span style="color: red; font-size: 16px">{{ formData.actual_salary }} 元</span>
             </el-form-item>
           </div>
           <div v-else>
@@ -53,7 +53,7 @@
               <el-input v-model.number="formData.work_order_quality_rate" placeholder="请填写质检合格率"><span slot="suffix">%</span></el-input>
             </el-form-item>
             <el-form-item label="结算金额" prop="actual_salary">
-              <el-input v-model.number="formData.actual_salary" placeholder="请填写本单结算金额（元）"><span slot="suffix">/元</span></el-input>
+              <el-input v-model="formData.actual_salary" type="number" placeholder="请填写本单结算金额（元）"><span slot="suffix">/元</span></el-input>
             </el-form-item>
             <el-form-item label="预计发放工资为">
               <span style="color: red; font-size: 16px">{{ formData.actual_salary }} 元</span>
@@ -143,13 +143,32 @@ export default {
       })
     },
     'formData.actual_settlement_quantity'() {
-
+      this.caclTotal()
+    },
+    'formData.reward_salary'() {
+      debugger
+      this.caclTotal()
+    },
+    'formData.deduction_salary'() {
+      debugger
+      this.caclTotal()
     }
   },
   created() {
     this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
   },
   methods: {
+    caclTotal() {
+      if (this.formData.actual_settlement_quantity) {
+        this.formData.actual_salary = (this.formData.actual_settlement_quantity * this.currentRowData.worker_unit_price).toFixed(2)
+        if (this.formData.reward_salary) {
+          this.formData.actual_salary = (Number(this.formData.actual_salary) + Number(this.formData.reward_salary)).toFixed(2)
+        }
+        if (this.formData.deduction_salary) {
+          this.formData.actual_salary = (Number(this.formData.actual_salary) - Number(this.formData.reward_salary)).toFixed(2)
+        }
+      }
+    },
     handleClose() {
       this.showDialog = false
     },

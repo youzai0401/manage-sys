@@ -7,6 +7,7 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
+          <p style="display: inline-block; margin: 0 10px;padding: 0;vertical-align: top">{{ userInfo.manager_name }}</p>
           <img src="../../assets/images/avatar.png" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
@@ -27,7 +28,6 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-import { setToken } from '@/utils/auth'
 
 export default {
   components: {
@@ -39,6 +39,15 @@ export default {
       'sidebar',
       'avatar'
     ])
+  },
+  data() {
+    return {
+      userInfo: {}
+    }
+  },
+  created() {
+    this.userInfo = sessionStorage.getItem('userInfo')
+    this.userInfo = JSON.parse(this.userInfo)
   },
   methods: {
     toggleSideBar() {
@@ -116,6 +125,7 @@ export default {
 
     .avatar-container {
       margin-right: 30px;
+      position: relative;
 
       .avatar-wrapper {
         margin-top: 5px;

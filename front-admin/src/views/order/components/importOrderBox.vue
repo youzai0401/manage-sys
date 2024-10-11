@@ -116,7 +116,10 @@ export default {
     handleClose() {
       this.showDialog = false
     },
-    initData() {}
+    async initData() {
+      await this.$nextTick()
+      this.$refs.upload.clearFiles()
+    }
   }
 }
 </script>

@@ -19,11 +19,10 @@
             <span>{{ currentRowData.order_name }}</span>
           </el-form-item>
           <el-form-item label="生产总量">
-            <span>{{ currentRowData.total_quantity }}</span>
+            <span>{{ currentRowData.total_quantity }} {{ currentRowData.unit }}</span>
           </el-form-item>
         </el-form>
         <p>选择服务点及分配数量</p>
-        <p>订单总价预估：{{ assignments_total_price }} 元</p>
         <div v-for="(item,index) in assignments" :key="item" style="display: flex;align-items: center;margin-bottom: 10px">
           <el-select
             v-model="item.service_point_id"
@@ -44,7 +43,7 @@
             />
           </el-select>
           <el-input v-model.number="item.quantity" :disabled="currentType === 'detail'" style="flex: 1.2; margin: 0 10px" placeholder="请填写分配数量" />
-          <el-input v-model.number="item.worker_unit_price" :disabled="currentType === 'detail'" style="flex: 2" placeholder="请输入报价，单位：元">
+          <el-input v-model="item.worker_unit_price" type="number" :disabled="currentType === 'detail'" style="flex: 2" placeholder="请输入报价，单位：元">
             <template slot="append">元</template>
           </el-input>
           <div v-if="currentType !== 'detail'" style="width: 70px">
@@ -57,6 +56,7 @@
       </div>
       <!--      关闭按钮-->
       <div slot="footer" class="footer">
+        <p style="display: inline-block; position: absolute;left: 20px;">订单总价预估：<span style="color: red">{{ assignments_total_price }} （元）</span></p>
         <el-button @click="showDialog = false">关闭</el-button>
         <el-button v-if="currentType !== 'detail'" :loading="saveLoading" type="primary" @click="handleSave">分配</el-button>
       </div>
@@ -156,6 +156,30 @@ export default {
     },
     handleSave() {
       // todo 校验
+      if (this.assignments.length === 0) {
+        this.$message.error('服务点数据不能为空')
+        return
+      }
+      const service_point_id_arr = this.assignments.map(item => item.service_point_id)
+      if (this.assignments.length !== [...new Set(service_point_id_arr)].length) {
+        this.$message.error('服务点不能重复，请检查后重试')
+        return
+      }
+      for (let i = 0; i < this.assignments.length; i++) {
+        const item = this.assignments[i]
+        if (!item.service_point_id) {
+          this.$message.error(`第${i + 1}条数据中服务点不能为空`)
+          return
+        }
+        if (!item.quantity) {
+          this.$message.error(`第${i + 1}条数据中分配数量不能为空`)
+          return
+        }
+        if (!item.worker_unit_price) {
+          this.$message.error(`第${i + 1}条数据中工人单价不能为空`)
+          return
+        }
+      }
       this.saveLoading = true
       this.$request.post(`/orders/${this.currentRowData.order_id}/assignments`,
         {

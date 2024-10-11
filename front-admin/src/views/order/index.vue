@@ -57,24 +57,29 @@
           {{ $dayjs(scope.row.estimated_return_date).format('YYYY-MM-DD') }}
         </template>
       </el-table-column>
-      <el-table-column label="回货数量" width="100" align="center" :resizable="false">
+      <el-table-column label="回货总量" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.return_quantity }}
+          {{ scope.row.actual_return_quantity || '/' }}
         </template>
       </el-table-column>
-      <el-table-column label="生产总价（元）" width="140" align="center" :resizable="false">
+      <el-table-column label="预计生产总价（元）" width="160" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.production_price }}
+          {{ scope.row.estimated_total_price || '/' }}
         </template>
       </el-table-column>
       <el-table-column label="当前状态" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.status | validFilter }}
+          <el-tag v-if="scope.row.status === 'UNASSIGNED'" type="warning">{{ scope.row.status | validFilter }}</el-tag>
+          <el-tag v-if="scope.row.status === 'ASSIGNED'" type="">{{ scope.row.status | validFilter }}</el-tag>
+          <el-tag v-if="scope.row.status === 'COMPLETED'" type="success">{{ scope.row.status | validFilter }}</el-tag>
+          <el-tag v-if="scope.row.status === 'CANCELLED'" type="danger">{{ scope.row.status | validFilter }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="物料说明" min-width="200" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.material_description }}
+          <div style="text-align: left; white-space: break-spaces;">
+            {{ scope.row.material_description }}
+          </div>
         </template>
       </el-table-column>
       <el-table-column fixed="right" align="center" prop="" label="操作" width="440" :resizable="false">
@@ -82,7 +87,7 @@
           <div class="table-operation-content">
             <el-button v-if="scope.row.status == 'UNASSIGNED'" type="primary" plain size="mini" @click="dispatchOrder(scope.row, 'dispatch')">分配</el-button>
             <el-button v-if="scope.row.status === 'ASSIGNED' || scope.row.status === 'COMPLETED'" type="primary" plain size="mini" @click="dispatchOrder(scope.row, 'detail')">分配详情</el-button>
-            <el-button :disabled="scope.row.status === 'CANCELLED'" type="danger" plain size="mini" @click="cancelOrder(scope.row)">取消订单</el-button>
+            <el-button :disabled="scope.row.status === 'CANCELLED' || scope.row.status === 'COMPLETED' " type="danger" plain size="mini" @click="cancelOrder(scope.row)">取消订单</el-button>
           </div>
         </template>
       </el-table-column>

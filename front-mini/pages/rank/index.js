@@ -54,7 +54,7 @@ Page({
     }).then(res => {
       if (res.success) {
         this.setData({
-          personalList: res.data.data
+          serviceList: res.data.data
         })
       } else {
         wx.showToast({

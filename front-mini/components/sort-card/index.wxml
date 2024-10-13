@@ -1,8 +1,8 @@
 <!--components/sort-card.wxml-->
 <view style="min-height: 80vh;" wx:if="{{list.length}}">
-  <view class="card-header">
+  <!-- <view class="card-header">
     header
-  </view>
+  </view> -->
   <view class="card-content">
     <view class="content-title">
       <text>排名</text>

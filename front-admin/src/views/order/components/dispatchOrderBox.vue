@@ -9,18 +9,28 @@
     >
       <div class="log-info__content">
         <el-form :inline="false" :model="currentRowData" class="demo-form-inline">
-          <el-form-item label="产品编码">
-            <span>{{ currentRowData.product_code }}</span>
-          </el-form-item>
-          <el-form-item label="订单编号">
-            <span>{{ currentRowData.order_number }}</span>
-          </el-form-item>
-          <el-form-item label="订单名称">
-            <span>{{ currentRowData.order_name }}</span>
-          </el-form-item>
-          <el-form-item label="生产总量">
-            <span>{{ currentRowData.total_quantity }} {{ currentRowData.unit }}</span>
-          </el-form-item>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="产品编码">
+                <span>{{ currentRowData.product_code }}</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="订单编号">
+                <span>{{ currentRowData.order_number }}</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="订单名称">
+                <span>{{ currentRowData.order_name }}</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="生产总量">
+                <span>{{ $numberWithCommas(currentRowData.total_quantity) }} {{ currentRowData.unit }}</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-form>
         <p>选择服务点及分配数量</p>
         <div v-for="(item,index) in assignments" :key="item" style="display: flex;align-items: center;margin-bottom: 10px">
@@ -33,7 +43,7 @@
             :loading="selectLoading"
             style="flex: 2"
             placeholder="请选择"
-            :disabled="currentType === 'detail'"
+            :disabled="!canEdit"
           >
             <el-option
               v-for="item in serverOption"
@@ -42,8 +52,8 @@
               :value="item.service_point_id"
             />
           </el-select>
-          <el-input v-model.number="item.quantity" :disabled="currentType === 'detail'" style="flex: 1.2; margin: 0 10px" placeholder="请填写分配数量" />
-          <el-input v-model="item.worker_unit_price" type="number" :disabled="currentType === 'detail'" style="flex: 2" placeholder="请输入报价，单位：元">
+          <el-input v-model.number="item.quantity" :disabled="!canEdit" style="flex: 1.2; margin: 0 10px" placeholder="请填写分配数量" />
+          <el-input v-model="item.worker_unit_price" type="number" :disabled="!canEdit" style="flex: 2" placeholder="请输入报价，单位：元">
             <template slot="append">元</template>
           </el-input>
           <div v-if="currentType !== 'detail'" style="width: 70px">
@@ -56,9 +66,9 @@
       </div>
       <!--      关闭按钮-->
       <div slot="footer" class="footer">
-        <p style="display: inline-block; position: absolute;left: 20px;">订单总价预估：<span style="color: red">{{ assignments_total_price }} （元）</span></p>
+        <p style="display: inline-block; position: absolute;left: 20px;">订单总价预估：<span style="color: red">{{ $numberWithCommas(assignments_total_price) }} （元）</span></p>
         <el-button @click="showDialog = false">关闭</el-button>
-        <el-button v-if="currentType !== 'detail'" :loading="saveLoading" type="primary" @click="handleSave">分配</el-button>
+        <el-button v-if="canEdit" :loading="saveLoading" type="primary" @click="handleSave">{{ currentRowData.status === 'ASSIGNED' ? "重新分配" : "分配" }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -93,6 +103,7 @@ export default {
           'estimated_pay_date': '' // 最晚交付时间 （不填 预留）
         }
       ],
+      canEdit: false,
       saveLoading: false,
       selectLoading: false,
       serverOption: [],
@@ -154,8 +165,7 @@ export default {
         'estimated_pay_date': '' // 最晚交付时间 （不填 预留）
       })
     },
-    handleSave() {
-      // todo 校验
+    async handleSave() {
       if (this.assignments.length === 0) {
         this.$message.error('服务点数据不能为空')
         return
@@ -175,15 +185,54 @@ export default {
           this.$message.error(`第${i + 1}条数据中分配数量不能为空`)
           return
         }
+        if (item.quantity % 100 !== 0) {
+          this.$message.error(`第${i + 1}条数据中分配数量必须为100的整数倍`)
+          return
+        }
         if (!item.worker_unit_price) {
           this.$message.error(`第${i + 1}条数据中工人单价不能为空`)
           return
         }
       }
+
       this.saveLoading = true
-      this.$request.post(`/orders/${this.currentRowData.order_id}/assignments`,
+      // 考虑重新分配
+      if (this.currentRowData.status === 'ASSIGNED') {
+        const checkRes = await this.$request.post(`/orders/${this.currentRowData.order_id}/reassignments/validate`, {
+          assignments: this.assignments.map(item => {
+            return {
+              'service_point_id': item.service_point_id, // 服务点ID
+              'quantity': item.quantity, // 分配数量
+              'worker_unit_price': item.worker_unit_price, // 工人单价
+              'estimated_pay_date': item.estimated_pay_date // 最晚交付时间 （不填 预留）
+            }
+          })
+        }).catch(() => {
+          this.saveLoading = false
+        })
+
+        if (!checkRes.success) {
+          this.$alert(checkRes.message, '提示', {
+            confirmButtonText: '确定',
+            callback: () => {
+            }
+          })
+          this.saveLoading = false
+          return
+        }
+      }
+
+      const url = `/orders/${this.currentRowData.order_id}/assignments`
+      this.$request.post(url,
         {
-          assignments: this.assignments
+          assignments: this.assignments.map(item => {
+            return {
+              'service_point_id': item.service_point_id, // 服务点ID
+              'quantity': item.quantity, // 分配数量
+              'worker_unit_price': item.worker_unit_price, // 工人单价
+              'estimated_pay_date': item.estimated_pay_date // 最晚交付时间 （不填 预留）
+            }
+          })
         }).then(res => {
         if (res.success) {
           this.$message.success('订单分配成功')
@@ -220,7 +269,12 @@ export default {
       this.assignments.splice(index, 1)
     },
     initData() {
+      this.assignments = []
       if (this.currentType === 'detail') {
+        this.canEdit = false
+        if (this.currentRowData.status === 'ASSIGNED') {
+          this.canEdit = true
+        }
         this.$request.get(`/orders/${this.currentRowData.order_id}`, {}).then(res => {
           const { data } = res
           if (data) {
@@ -229,6 +283,7 @@ export default {
         })
         this.remoteMethod('')
       } else {
+        this.canEdit = true
         this.remoteMethod('')
         this.assignments = [
           {

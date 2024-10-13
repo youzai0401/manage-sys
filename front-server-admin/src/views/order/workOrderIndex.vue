@@ -12,11 +12,11 @@
       highlight-current-row
       @selection-change="handleSelectionChange"
     >
-      <el-table-column
-        type="selection"
-        align="center"
-        width="55"
-      />
+      <!--      <el-table-column-->
+      <!--        type="selection"-->
+      <!--        align="center"-->
+      <!--        width="55"-->
+      <!--      />-->
       <el-table-column align="center" label="工单ID" width="95" :resizable="false">
         <template slot-scope="scope">
           {{ scope.row.work_order_id }}
@@ -24,12 +24,12 @@
       </el-table-column>
       <el-table-column label="领取人" width="100" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.worker_name }}
+          {{ $numberWithCommas(scope.row.worker_name) }}
         </template>
       </el-table-column>
       <el-table-column label="领取数量" :width="180" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.receiver_quantity }}
+          {{ $numberWithCommas(scope.row.receiver_quantity) }}
         </template>
       </el-table-column>
       <el-table-column label="单位" width="100" align="center" :resizable="false">
@@ -44,17 +44,17 @@
       </el-table-column>
       <el-table-column label="单价（元）" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.worker_unit_price }}
+          {{ $numberWithCommas(scope.row.worker_unit_price) }}
         </template>
       </el-table-column>
       <el-table-column label="总价（元）" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.worker_total_price }}
+          {{ $numberWithCommas(scope.row.worker_total_price) }}
         </template>
       </el-table-column>
       <el-table-column label="工单状态" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === '待领取'" type="warning">{{ scope.row.status }}</el-tag>
+          <el-tag v-if="scope.row.status === '待取料'" type="warning">{{ scope.row.status }}</el-tag>
           <el-tag v-if="scope.row.status === '加工中'" type="info">{{ scope.row.status }}</el-tag>
           <el-tag v-if="scope.row.status === '已交付'">{{ scope.row.status }}</el-tag>
           <el-tag v-if="scope.row.status === '已完成'" type="success">{{ scope.row.status }}</el-tag>

@@ -17,11 +17,11 @@
       highlight-current-row
       @selection-change="handleSelectionChange"
     >
-      <el-table-column
-        type="selection"
-        align="center"
-        width="55"
-      />
+      <!--      <el-table-column-->
+      <!--        type="selection"-->
+      <!--        align="center"-->
+      <!--        width="55"-->
+      <!--      />-->
       <el-table-column align="center" label="订单ID" min-width="95" :resizable="false">
         <template slot-scope="scope">
           {{ scope.row.order_id }}
@@ -44,12 +44,12 @@
       </el-table-column>
       <el-table-column label="生产总量" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.total_quantity }}
+          {{ $numberWithCommas(scope.row.total_quantity) }}
         </template>
       </el-table-column>
       <el-table-column label="回货总量" min-width="100" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.actual_return_quantity }}
+          {{ $numberWithCommas(scope.row.actual_return_quantity) || '/' }}
         </template>
       </el-table-column>
       <el-table-column label="单位" :min-width="180" align="center" :resizable="false">
@@ -67,14 +67,20 @@
           {{ scope.row.actual_return_date ? $dayjs(scope.row.actual_return_date).format('YYYY-MM-DD') : '/' }}
         </template>
       </el-table-column>
-      <el-table-column label="生产总价（元）" min-width="200" align="center" :resizable="false">
+      <el-table-column label="预计生产总价（元）" min-width="200" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.estimated_total_price }}
+          {{ $numberWithCommas(scope.row.estimated_total_price) || '/' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="实际结算总价（元）" min-width="200" align="center" :resizable="false">
+        <template slot-scope="scope">
+          {{ $numberWithCommas(scope.row.actual_total_price) || '/' }}
         </template>
       </el-table-column>
       <el-table-column label="结算状态" min-width="200" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.settlement_status | validFilter }}
+          <el-tag v-if="scope.row.settlement_status === 'PENDING'" type="warning">{{ scope.row.settlement_status | validFilter }}</el-tag>
+          <el-tag v-if="scope.row.settlement_status === 'SETTLED'" type="success">{{ scope.row.settlement_status | validFilter }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column fixed="right" align="center" prop="" label="操作" width="180" :resizable="false">
@@ -180,7 +186,7 @@ export default {
     handleConfirm(rowData) {
       this.$alert('<div>' +
         '<p>请确认订单结算金额无误后点击结算按钮。</p>' +
-        '<p>其中:。</p>' +
+        '<p>其中:</p>' +
         '<p>1.直营点及代发工资的非直营点会在账期结束后自动给工人结算工资。</p>' +
         '<p>2.非直营点的服务点余额需要线下手动打款进行结算。</p>', '结算确认', {
         confirmButtonText: '确定',

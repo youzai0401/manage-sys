@@ -17,11 +17,11 @@
       highlight-current-row
       @selection-change="handleSelectionChange"
     >
-      <el-table-column
-        type="selection"
-        align="center"
-        width="55"
-      />
+      <!--      <el-table-column-->
+      <!--        type="selection"-->
+      <!--        align="center"-->
+      <!--        width="55"-->
+      <!--      />-->
       <el-table-column align="center" label="ID" min-width="95" :resizable="false">
         <template slot-scope="scope">
           {{ scope.row.service_point_id }}
@@ -60,10 +60,11 @@
       :current-page="currentPage"
       :page-size="pageSize"
       :page-sizes="[10, 15, 20, 30]"
-      layout="total, prev, pager, next, jumper"
+      layout="total, sizes, prev, pager, next, jumper"
       :total="total"
       class="pagination"
       @current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
     />
     <editBox :show.sync="showEditBox" :current-row-data="currentRowData" />
   </div>
@@ -99,6 +100,7 @@ export default {
       cityLoading: false,
       multipleSelection: [],
       currentPage: 1,
+      pageSize: 20,
       total: 0
     }
   },
@@ -109,6 +111,11 @@ export default {
     handleAdd() {
       this.showEditBox = true
       this.currentRowData = {}
+    },
+    handleSizeChange(val) {
+      this.currentPage = 1
+      this.pageSize = val
+      this.fetchData()
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`)

@@ -39,12 +39,12 @@ module.exports = {
     // before: require('./mock/mock-server.js'),
     proxy: {
       '/api': {
-        target: 'http://117.50.221.18:8081', // 请求的第三方接口地址
+        target: 'https://api.bmxt.info', // 请求的第三方接口地址
         changeOrigin: true, // 请求跨域时，需配置此项
         pathRewrite: { // 路径重写,替换target中的请求地址
           '^/': '/'
         }
-      },
+      }
     }
   },
   configureWebpack: {

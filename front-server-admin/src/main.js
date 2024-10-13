@@ -41,6 +41,15 @@ Vue.config.productionTip = false
 Vue.prototype.$request = request
 Vue.prototype.$dayjs = dayjs
 
+function numberWithCommas(x) {
+  if (!x && x !== 0) {
+    return ''
+  }
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}
+
+Vue.prototype.$numberWithCommas = numberWithCommas
+
 new Vue({
   el: '#app',
   router,

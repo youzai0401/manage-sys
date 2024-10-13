@@ -1,5 +1,5 @@
 // 小程序开发api接口工具包，https://github.com/gooking/wxapi
-var API_BASE_URL = 'http://117.50.221.18:8081/api';
+var API_BASE_URL = 'https://api.bmxt.info/api';
 // var API_BASE_URL = 'http://127.0.0.1:8081';
 var subDomain = 'api/';
 var merchantId = '0';
@@ -16,7 +16,7 @@ export async function request(url, method, data) {
   }
   var header = {
     'Content-Type': 'application/json',
-    'Authorization': token
+    'Authorization': `Bearer ${token}`
   };
   return new Promise(function (resolve, reject) {
     wx.request({

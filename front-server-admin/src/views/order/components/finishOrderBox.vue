@@ -4,17 +4,23 @@
     <el-dialog
       title="结算工单"
       :visible.sync="showDialog"
-      width="500"
+      width="800px"
       @close="handleClose"
     >
       <div class="log-info__content">
         <el-form ref="formData" :inline="false" :model="formData" :rules="formDataRules" label-width="120px">
-          <el-form-item label="计划回货量">
-            <span>{{ currentRowData.receiver_quantity }} {{ currentRowData.unit }}</span>
-          </el-form-item>
-          <el-form-item label="结算单价">
-            <span>{{ currentRowData.worker_unit_price }} （元）</span>
-          </el-form-item>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="计划回货量">
+                <span>{{ $numberWithCommas(currentRowData.receiver_quantity) }} {{ currentRowData.unit }}</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="结算单价">
+                <span>{{ $numberWithCommas(currentRowData.worker_unit_price) }} （元）</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
           <div v-if="userInfo.type === 'DIRECT' || (userInfo.type !== 'DIRECT' && userInfo.is_salary_managed)">
             <el-form-item label="实际回货量" prop="actual_settlement_quantity">
               <el-input v-model.number="formData.actual_settlement_quantity" placeholder="请填写实际回货量"><span slot="suffix">/元</span></el-input>
@@ -45,7 +51,7 @@
               </el-form-item>
             </template>
             <el-form-item label="预计发放工资为">
-              <span style="color: red; font-size: 16px">{{ formData.actual_salary }} 元</span>
+              <span style="color: red; font-size: 16px">{{ $numberWithCommas(formData.actual_salary) }} 元</span>
             </el-form-item>
           </div>
           <div v-else>
@@ -56,7 +62,7 @@
               <el-input v-model="formData.actual_salary" type="number" placeholder="请填写本单结算金额（元）"><span slot="suffix">/元</span></el-input>
             </el-form-item>
             <el-form-item label="预计发放工资为">
-              <span style="color: red; font-size: 16px">{{ formData.actual_salary }} 元</span>
+              <span style="color: red; font-size: 16px">{{ $numberWithCommas(formData.actual_salary) }} 元</span>
             </el-form-item>
           </div>
         </el-form>
@@ -146,11 +152,9 @@ export default {
       this.caclTotal()
     },
     'formData.reward_salary'() {
-      debugger
       this.caclTotal()
     },
     'formData.deduction_salary'() {
-      debugger
       this.caclTotal()
     }
   },
@@ -165,7 +169,7 @@ export default {
           this.formData.actual_salary = (Number(this.formData.actual_salary) + Number(this.formData.reward_salary)).toFixed(2)
         }
         if (this.formData.deduction_salary) {
-          this.formData.actual_salary = (Number(this.formData.actual_salary) - Number(this.formData.reward_salary)).toFixed(2)
+          this.formData.actual_salary = (Number(this.formData.actual_salary) - Number(this.formData.deduction_salary)).toFixed(2)
         }
       }
     },

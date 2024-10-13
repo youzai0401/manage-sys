@@ -17,11 +17,11 @@
       highlight-current-row
       @selection-change="handleSelectionChange"
     >
-      <el-table-column
-        type="selection"
-        align="center"
-        width="55"
-      />
+      <!--      <el-table-column-->
+      <!--        type="selection"-->
+      <!--        align="center"-->
+      <!--        width="55"-->
+      <!--      />-->
       <el-table-column align="center" label="工号" min-width="95" :resizable="false">
         <template slot-scope="scope">
           {{ scope.row.worker_id }}
@@ -40,6 +40,11 @@
       <el-table-column label="联系方式" min-width="160" align="center" :resizable="false">
         <template slot-scope="scope">
           {{ scope.row.contact_number }}
+        </template>
+      </el-table-column>
+      <el-table-column label="整体质检合格率" min-width="160" align="center" :resizable="false">
+        <template slot-scope="scope">
+          {{ scope.row.avg_quality_rate * 100 }}%
         </template>
       </el-table-column>
       <!--      <el-table-column fixed="right" align="center" prop="" label="操作" width="180" :resizable="false">-->

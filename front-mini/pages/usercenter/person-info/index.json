@@ -6,7 +6,6 @@
     "t-button": "tdesign-miniprogram/button/button",
     "t-image": "/components/webp-image/index",
     "t-dialog": "tdesign-miniprogram/dialog/dialog",
-    "t-toast": "tdesign-miniprogram/toast/toast",
-    "t-select-picker": "../components/ui-select-picker/index"
+    "t-toast": "tdesign-miniprogram/toast/toast"
   }
 }

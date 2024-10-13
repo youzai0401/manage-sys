@@ -1,17 +1,43 @@
 <!--components/sort-card.wxml-->
-<view style="min-height: 80vh;" wx:if="{{list.length}}">
-  <!-- <view class="card-header">
-    header
-  </view> -->
-  <view class="card-content">
+<view style="min-height: 100vh; background-color: #f5f5f5;" wx:if="{{list.length}}">
+  <view class="card-header">
+    <view class="first top-item" wx:if="{{list.length > 0}}">
+      <image style="width: 68rpx;height: 64rpx;position: absolute;top: 20rpx;left: 64rpx" src="../../images/first.png" mode="" />
+      <view class="avatar">
+        <image style="width: 100rpx;height: 100rpx;" wx:if="{{list[0].avatar_url}}" src="{{list[0].avatar_url}}" alt="" />
+        <image style="width: 100rpx;height: 100rpx;" wx:else src="../../images/avatar.png" mode="" />
+      </view>
+      <view style="text-align: center;margin: 8rpx 0;">{{list[0].worker_name || "微信用户"}}</view>
+      <view style="text-align: center;">{{list[0].total_completed_quantity || 0}}</view>
+    </view>
+    <view class="second top-item" wx:if="{{list.length > 1}}">
+      <image style="width: 68rpx;height: 64rpx;position: absolute;top: 20rpx;left: 64rpx" src="../../images/second.png" mode="" />
+      <view class="avatar">
+        <image style="width: 100rpx;height: 100rpx;" wx:if="{{list[1].avatar_url}}" src="{{list[1].avatar_url}}" alt="" />
+        <image style="width: 100rpx;height: 100rpx;" wx:else src="../../images/avatar.png" mode="" />
+      </view>
+      <view style="text-align: center;margin: 8rpx 0;">{{list[1].worker_name || "微信用户"}}</view>
+      <view style="text-align: center;">{{list[1].total_completed_quantity || 0}}</view>
+    </view>
+    <view class="third top-item" wx:if="{{list.length > 2}}">
+      <image style="width: 68rpx;height: 64rpx;position: absolute;top: 20rpx;left: 64rpx" src="../../images/third.png" mode="" />
+      <view class="avatar">
+        <image style="width: 100rpx;height: 100rpx;" wx:if="{{list[2].avatar_url}}" src="{{list[2].avatar_url}}" alt="" />
+        <image style="width: 100rpx;height: 100rpx;" wx:else src="../../images/avatar.png" mode="" />
+      </view>
+      <view style="text-align: center;margin: 8rpx 0;">{{list[2].worker_name || "微信用户"}}</view>
+      <view style="text-align: center;">{{list[2].total_completed_quantity || 0}}</view>
+    </view>
+  </view>
+  <view class="card-content" wx:if="{{list.length >= 3}}">
     <view class="content-title">
       <text>排名</text>
       <text>姓名</text>
       <text>数量</text>
     </view>
     <view>
-      <block wx:for="{{list}}" wx:for-item="item" wx:key="index">
-        <view class="content-item">
+      <block wx:for="{{list}}" wx:for-item="item" wx:for-index="index" wx:key="index">
+        <view wx:if="{{index >= 3}}" class="content-item">
           <text>{{item.ranking_position}}</text>
           <text>{{item.worker_name}}</text>
           <text>{{item.total_completed_quantity}}</text>

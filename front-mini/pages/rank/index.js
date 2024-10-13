@@ -35,6 +35,7 @@ Page({
       service_point_id: this.data.userInfo.service_point_id
     }).then(res => {
       if (res.success) {
+        // let a = [...res.data.data, ...res.data.data, ...res.data.data, ...res.data.data, ...res.data.data];
         this.setData({
           personalList: res.data.data
         })

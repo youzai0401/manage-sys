@@ -4,6 +4,11 @@
   border-radius: 10rpx;
 }
 
+.card-header {
+  position: relative;
+  height: 500rpx;
+}
+
 .content-title {
   background: rgba(0, 0, 255, 0.8);
   height: 60rpx;
@@ -26,4 +31,44 @@
 
 .card-title text {
   flex: 1;
+}
+
+.card-content {
+  position: relative;
+}
+
+.top-item {
+  width: 200rpx;
+  height: 300rpx;
+  background-color: #fff;
+  border-radius: 10rpx;
+}
+
+.avatar {
+  text-align: center;
+  margin-top: 60rpx;
+}
+
+.first {
+  position: absolute;
+  top: 20rpx;
+  left: 275rpx;
+  z-index: 99;
+  background-color: blanchedalmond;
+}
+
+.second {
+  position: absolute;
+  top: 100rpx;
+  left: 90rpx;
+  background-color: aliceblue;
+  z-index: 88;
+}
+
+.third {
+  position: absolute;
+  top: 160rpx;
+  left: 450rpx;
+  background-color: azure;
+  z-index: 77;
 }

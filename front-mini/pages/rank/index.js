@@ -49,7 +49,21 @@ Page({
   },
 
   getServiceRank() {
-
+    serviceRanking({
+      // service_point_id: this.data.userInfo.service_point_id
+    }).then(res => {
+      if (res.success) {
+        this.setData({
+          personalList: res.data.data
+        })
+      } else {
+        wx.showToast({
+          title: res.message,
+          duration: 3000,
+          icon: 'none',
+        });
+      }
+    })
   },
 
   onTabsClick(event) {

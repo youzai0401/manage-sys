@@ -93,7 +93,7 @@
         <template slot-scope="scope">
           <div class="table-operation-content">
             <el-button type="primary" :disabled="scope.row.status !== 'PENDING'" plain size="mini" @click="dispatchOrder(scope.row, 'dispatch')">发布</el-button>
-            <el-button type="primary" :disabled="scope.row.status !== 'PUBLISHED'" plain size="mini" @click="finishOrder(scope.row)">完成</el-button>
+            <el-button type="primary" :loading="finishLoading" :disabled="scope.row.status !== 'PUBLISHED'" plain size="mini" @click="finishOrder(scope.row)">完成</el-button>
           </div>
         </template>
       </el-table-column>
@@ -150,6 +150,7 @@ export default {
     return {
       list: null,
       listLoading: true,
+      finishLoading: false,
       searchForm: {
         productId: '',
         poiName: '',
@@ -193,12 +194,18 @@ export default {
       this.currentRowData = rowData
       this.currentType = type
     },
-    finishOrder(rowData) {
+    async finishOrder(rowData) {
+      this.finishLoading = true
+      const finishRes = await this.$request.get(`/assignments/${rowData.assignment_id}`)
+      if (!finishRes.success) {
+        this.$message.error(finishRes.message)
+        return
+      }
       this.$confirm(`<div>
-          <p>预计生产总量：${this.$numberWithCommas(rowData.quantity)}${rowData.unit}</p>
-          <p>当前回货总量：${this.$numberWithCommas(rowData.actual_return_quantity)}${rowData.unit}</p>
-          <p>预计生产总价：${this.$numberWithCommas(rowData.assignments_total_price)}元</p>
-          <p>实际生产总价：<span style="color: red; font-size: 16px">${this.$numberWithCommas(rowData.actual_total_price)}元</span></p>
+          <p>预计生产总量：${this.$numberWithCommas(finishRes.data.quantity)}${rowData.unit}</p>
+          <p>当前回货总量：${this.$numberWithCommas(finishRes.data.actual_return_quantity)}${rowData.unit}</p>
+          <p>预计生产总价：${this.$numberWithCommas(finishRes.data.assignments_total_price)}元</p>
+          <p>实际生产总价：<span style="color: red; font-size: 16px">${this.$numberWithCommas(finishRes.data.actual_total_price)}元</span></p>
           </div>`, '完成订单', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

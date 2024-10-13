@@ -56,7 +56,7 @@
           <el-input v-model="item.worker_unit_price" type="number" :disabled="!canEdit" style="flex: 2" placeholder="请输入报价，单位：元">
             <template slot="append">元</template>
           </el-input>
-          <div v-if="currentType !== 'detail'" style="width: 70px">
+          <div v-if="canEdit" style="width: 70px">
             <i v-if="index+1 === assignments.length" style="font-size: 30px" class="el-icon-circle-plus-outline" @click="handleAdd" />
             <i v-if="assignments.length !== 1" style="font-size: 30px" class="el-icon-remove-outline" @click="handleDel(index)" />
           </div>

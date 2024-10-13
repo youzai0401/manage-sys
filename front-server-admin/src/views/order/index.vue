@@ -195,10 +195,10 @@ export default {
     },
     finishOrder(rowData) {
       this.$confirm(`<div>
-          <p>预计生产总量：${this.$numberWithCommas(rowData.quantity)}</p>
-          <p>当前回货总量：${this.$numberWithCommas(rowData.actual_return_quantity)}</p>
-          <p>预计生产总价：${this.$numberWithCommas(rowData.assignments_total_price)}</p>
-          <p>实际生产总价：${this.$numberWithCommas(rowData.actual_total_price)}</p>
+          <p>预计生产总量：${this.$numberWithCommas(rowData.quantity)}${rowData.unit}</p>
+          <p>当前回货总量：${this.$numberWithCommas(rowData.actual_return_quantity)}${rowData.unit}</p>
+          <p>预计生产总价：${this.$numberWithCommas(rowData.assignments_total_price)}元</p>
+          <p>实际生产总价：<span style="color: red; font-size: 16px">${this.$numberWithCommas(rowData.actual_total_price)}元</span></p>
           </div>`, '完成订单', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

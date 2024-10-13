@@ -49,7 +49,7 @@
       </el-table-column>
       <el-table-column label="单价（元）" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ $numberWithCommas(scope.row.assignments_price) }}
+          {{ $numberWithCommas(scope.row.worker_unit_price) }}
         </template>
       </el-table-column>
       <el-table-column label="生产总价（元）" width="140" align="center" :resizable="false">

@@ -18,11 +18,11 @@
       highlight-current-row
       @selection-change="handleSelectionChange"
     >
-      <el-table-column
-        type="selection"
-        align="center"
-        width="55"
-      />
+      <!--      <el-table-column-->
+      <!--        type="selection"-->
+      <!--        align="center"-->
+      <!--        width="55"-->
+      <!--      />-->
       <el-table-column align="center" label="支付单ID" min-width="95" :resizable="false">
         <template slot-scope="scope">
           {{ scope.row.payment_id }}
@@ -35,7 +35,7 @@
       </el-table-column>
       <el-table-column label="支付金额（元）" :width="180" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.payment_amount }}
+          {{ $numberWithCommas(scope.row.payment_amount) }}
         </template>
       </el-table-column>
       <el-table-column label="收款人" :width="180" align="center" :resizable="false">
@@ -60,7 +60,7 @@
       </el-table-column>
       <el-table-column label="奖励（元）" min-width="100" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.reward_salary || '/' }}
+          {{ $numberWithCommas(scope.row.reward_salary) || '/' }}
         </template>
       </el-table-column>
       <el-table-column label="奖励原因" :min-width="180" align="center" :resizable="false">
@@ -70,7 +70,7 @@
       </el-table-column>
       <el-table-column label="扣款（元）" min-width="100" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.deduction_salary || '/' }}
+          {{ $numberWithCommas(scope.row.deduction_salary) || '/' }}
         </template>
       </el-table-column>
       <el-table-column label="扣款原因" :min-width="180" align="center" :resizable="false">

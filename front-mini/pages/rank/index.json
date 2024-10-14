@@ -3,6 +3,7 @@
   "usingComponents": {
     "t-tabs": "tdesign-miniprogram/tabs/tabs",
     "t-tab-panel": "tdesign-miniprogram/tab-panel/tab-panel",
-    "sort-card": "/components/sort-card/index"
+    "sort-card": "/components/sort-card/index",
+    "sort-card-service": "/components/sort-card-service/index"
   }
 }

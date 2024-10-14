@@ -4,7 +4,7 @@
     <el-dialog
       title="改单"
       :visible.sync="showDialog"
-      width="500"
+      width="600px"
       @close="handleClose"
     >
       <div class="log-info__content">
@@ -13,7 +13,7 @@
             <span>{{ currentRowData.work_order_id }}</span>
           </el-form-item>
           <el-form-item label="领取人">
-            <span>{{ currentRowData.worker_name || '-' }}</span>
+            <span>{{ $numberWithCommas(currentRowData.worker_name) || '-' }}</span>
           </el-form-item>
           <el-form-item label="领取数量" prop="receiver_quantity">
             <el-input v-model="formData.receiver_quantity" placeholder="请输入产品领取数量" />

@@ -11,7 +11,7 @@
 </view>
 <t-dialog visible="{{showWithInput}}" title="选择抢单量" confirm-btn="确定" cancel-btn="取消" bind:confirm="handleClaimOrder" bind:cancel="closeDialog">
   <view slot="content">
-    <t-stepper style="display: flex; justify-content: center; margin-top: 40rpx;" value="{{claimValue}}" size="large" theme="filled" step="100" max="1000000000000" bind:change="handleClaimValueChange" />
+    <t-stepper class="stepper" style="display: flex; justify-content: center; margin-top: 40rpx;" value="{{claimValue}}" size="large" theme="filled" step="100" max="1000000000000" bind:change="handleClaimValueChange" />
   </view>
 
 </t-dialog>

@@ -7,7 +7,7 @@
         <image style="width: 100rpx;height: 100rpx;" wx:if="{{list[0].avatar_url}}" src="{{list[0].avatar_url}}" alt="" />
         <image style="width: 100rpx;height: 100rpx;" wx:else src="../../images/avatar.png" mode="" />
       </view>
-      <view style="text-align: center;margin: 8rpx 0;">{{list[0].worker_name || "微信用户"}}</view>
+      <view style="text-align: center;margin: 8rpx 0;">{{list[0].service_point_name || "微信用户"}}</view>
       <view style="text-align: center;">{{list[0].total_completed_quantity || 0}}</view>
     </view>
     <view class="second top-item" wx:if="{{list.length > 1}}">
@@ -16,7 +16,7 @@
         <image style="width: 100rpx;height: 100rpx;" wx:if="{{list[1].avatar_url}}" src="{{list[1].avatar_url}}" alt="" />
         <image style="width: 100rpx;height: 100rpx;" wx:else src="../../images/avatar.png" mode="" />
       </view>
-      <view style="text-align: center;margin: 8rpx 0;">{{list[1].worker_name || "微信用户"}}</view>
+      <view style="text-align: center;margin: 8rpx 0;">{{list[1].service_point_name || "微信用户"}}</view>
       <view style="text-align: center;">{{list[1].total_completed_quantity || 0}}</view>
     </view>
     <view class="third top-item" wx:if="{{list.length > 2}}">
@@ -25,7 +25,7 @@
         <image style="width: 100rpx;height: 100rpx;" wx:if="{{list[2].avatar_url}}" src="{{list[2].avatar_url}}" alt="" />
         <image style="width: 100rpx;height: 100rpx;" wx:else src="../../images/avatar.png" mode="" />
       </view>
-      <view style="text-align: center;margin: 8rpx 0;">{{list[2].worker_name || "微信用户"}}</view>
+      <view style="text-align: center;margin: 8rpx 0;">{{list[2].service_point_name || "微信用户"}}</view>
       <view style="text-align: center;">{{list[2].total_completed_quantity || 0}}</view>
     </view>
   </view>
@@ -39,7 +39,7 @@
       <block wx:for="{{list}}" wx:for-item="item" wx:for-index="index" wx:key="index">
         <view wx:if="{{index >= 3}}" class="content-item">
           <text>{{item.ranking_position}}</text>
-          <text>{{item.worker_name}}</text>
+          <text>{{item.service_point_name}}</text>
           <text>{{item.total_completed_quantity}}</text>
         </view>
       </block>

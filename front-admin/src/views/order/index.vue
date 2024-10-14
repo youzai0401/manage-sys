@@ -17,11 +17,11 @@
       highlight-current-row
       @selection-change="handleSelectionChange"
     >
-      <el-table-column
-        type="selection"
-        align="center"
-        width="55"
-      />
+      <!--      <el-table-column-->
+      <!--        type="selection"-->
+      <!--        align="center"-->
+      <!--        width="55"-->
+      <!--      />-->
       <el-table-column align="center" label="订单ID" width="95" :resizable="false">
         <template slot-scope="scope">
           {{ scope.row.order_id }}
@@ -44,7 +44,7 @@
       </el-table-column>
       <el-table-column label="生产总量" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.total_quantity }}
+          {{ $numberWithCommas(scope.row.total_quantity) }}
         </template>
       </el-table-column>
       <el-table-column label="单位" width="100" align="center" :resizable="false">
@@ -59,12 +59,12 @@
       </el-table-column>
       <el-table-column label="回货总量" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.actual_return_quantity || '/' }}
+          {{ $numberWithCommas(scope.row.actual_return_quantity) || '/' }}
         </template>
       </el-table-column>
       <el-table-column label="预计生产总价（元）" width="160" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.estimated_total_price || '/' }}
+          {{ $numberWithCommas(scope.row.estimated_total_price) || '/' }}
         </template>
       </el-table-column>
       <el-table-column label="当前状态" width="100" align="center" :resizable="false">
@@ -196,37 +196,47 @@ export default {
       this.currentRowData = rowData
       this.currentType = type
     },
-    cancelOrder(rowData) {
-      this.$confirm('服务点端分配的订单将被取消，是否确认取消?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$request({
-          url: `/orders/${rowData.order_id}`,
-          method: 'delete'
-        }).then(res => {
-          if (res.success) {
-            this.$message({
-              type: 'success',
-              message: '订单已取消!'
-            })
-            this.currentPage = 1
-            this.fetchData()
-          } else {
-            this.$message({
-              type: 'warning',
-              message: res.message
-            })
-          }
+    async cancelOrder(rowData) {
+      const checkRes = await this.$request.post(`/orders/${rowData.order_id}/cancellation/validate`)
+
+      if (checkRes.success) {
+        this.$confirm('服务点端分配的订单将被取消，是否确认取消?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$request({
+            url: `/orders/${rowData.order_id}`,
+            method: 'delete'
+          }).then(res => {
+            if (res.success) {
+              this.$message({
+                type: 'success',
+                message: '订单已取消!'
+              })
+              this.currentPage = 1
+              this.fetchData()
+            } else {
+              this.$message({
+                type: 'warning',
+                message: res.message
+              })
+            }
+          }).catch(() => {
+          })
         }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          })
         })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消'
+      } else {
+        this.$alert(checkRes.message, '提示', {
+          confirmButtonText: '确定',
+          callback: () => {
+          }
         })
-      })
+      }
     },
     fetchData() {
       this.listLoading = true

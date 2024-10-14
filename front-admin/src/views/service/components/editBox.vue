@@ -168,7 +168,7 @@ export default {
                 this.showDialog = false
                 this.$emit('success')
 
-                this.$alert('创建成功，请通知服务点负责人使用手机号及密码登录服务点端，服务点端地址为：www.xxxx.com', '创建服务点', {
+                this.$alert('创建成功，请通知服务点负责人使用手机号及密码登录服务点端，服务点端地址为：https://service.bmxt.info/', '创建服务点', {
                   confirmButtonText: '确定',
                   callback: () => {
                   }

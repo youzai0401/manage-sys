@@ -1,9 +1,9 @@
 import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
-import store from '@/store'
-import { getToken } from '@/utils/auth'
+// import store from '@/store'
+import { getToken, removeToken } from '@/utils/auth'
 import router from '@/router'
-const noToken = false
+let noToken = false
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
@@ -78,6 +78,27 @@ service.interceptors.response.use(
     // }
   },
   error => {
+    if (error.response.status === 401) {
+      if (noToken) {
+        return Promise.reject(error.response)
+      }
+      // to re-login
+      noToken = true
+      MessageBox.confirm('用户未登录或者登录已失效，请重新登录', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        removeToken() // must remove  token  first
+        sessionStorage.removeItem('userInfo')
+        //  跳转到登录页面
+        router.replace({ path: '/login' })
+        noToken = false
+      }).catch(() => {
+        noToken = false
+      })
+      return
+    }
     console.log('err' + error) // for debug
     Message({
       message: error.message,

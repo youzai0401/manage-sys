@@ -44,7 +44,7 @@ Page({
 
   onShow() {
     this.getTabBar().init();
-    this.init();
+    // this.init();
   },
 
   async onLoad(options) {
@@ -178,6 +178,15 @@ Page({
     if (this.data.claimValue == 0 || !this.data.claimValue) {
       wx.showToast({
         title: '单量不能为0',
+        duration: 3000,
+        icon: 'none',
+      });
+      return;
+    }
+    // 判断必须为100的整数倍
+    if (this.data.claimValue % 100 !== 0) {
+      wx.showToast({
+        title: '领取单量必须是100的倍数，如：1000、1100、1200',
         duration: 3000,
         icon: 'none',
       });

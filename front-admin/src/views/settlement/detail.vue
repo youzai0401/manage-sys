@@ -18,11 +18,11 @@
       highlight-current-row
       @selection-change="handleSelectionChange"
     >
-      <el-table-column
-        type="selection"
-        align="center"
-        width="55"
-      />
+      <!--      <el-table-column-->
+      <!--        type="selection"-->
+      <!--        align="center"-->
+      <!--        width="55"-->
+      <!--      />-->
       <el-table-column align="center" label="服务点ID" min-width="95" :resizable="false">
         <template slot-scope="scope">
           {{ scope.row.service_point_id }}
@@ -45,12 +45,12 @@
       </el-table-column>
       <el-table-column label="分配总量" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.quantity }}
+          {{ $numberWithCommas(scope.row.quantity) || '/' }}
         </template>
       </el-table-column>
       <el-table-column label="回货总量" min-width="100" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.actual_return_quantity }}
+          {{ $numberWithCommas(scope.row.actual_return_quantity) || '/' }}
         </template>
       </el-table-column>
       <el-table-column label="单位报价（元）" :min-width="180" align="center" :resizable="false">
@@ -60,22 +60,22 @@
       </el-table-column>
       <el-table-column label="预计生产总价（元）" min-width="200" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.assignments_total_price }}
+          {{ $numberWithCommas(scope.row.assignments_total_price) || '/' }}
         </template>
       </el-table-column>
       <el-table-column label="实际结算总价（元）" min-width="200" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.actual_settlement_price }}
+          {{ $numberWithCommas(scope.row.actual_settlement_price) || '/' }}
         </template>
       </el-table-column>
       <el-table-column label="发放工资总额（元）" min-width="200" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.actual_total_price }}
+          {{ $numberWithCommas(scope.row.actual_total_price) || '/' }}
         </template>
       </el-table-column>
       <el-table-column label="服务点余额（元）" min-width="200" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.service_point_balance }}
+          {{ $numberWithCommas(scope.row.service_point_balance) || '/' }}
         </template>
       </el-table-column>
     </el-table>

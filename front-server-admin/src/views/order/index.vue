@@ -12,11 +12,11 @@
       highlight-current-row
       @selection-change="handleSelectionChange"
     >
-      <el-table-column
-        type="selection"
-        align="center"
-        width="55"
-      />
+      <!--      <el-table-column-->
+      <!--        type="selection"-->
+      <!--        align="center"-->
+      <!--        width="55"-->
+      <!--      />-->
       <el-table-column align="center" label="订单ID" width="95" :resizable="false">
         <template slot-scope="scope">
           {{ scope.row.order_id }}
@@ -39,7 +39,7 @@
       </el-table-column>
       <el-table-column label="生产总量" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.quantity }}
+          {{ $numberWithCommas(scope.row.quantity) }}
         </template>
       </el-table-column>
       <el-table-column label="单位" width="100" align="center" :resizable="false">
@@ -49,12 +49,12 @@
       </el-table-column>
       <el-table-column label="单价（元）" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.assignments_price }}
+          {{ $numberWithCommas(scope.row.worker_unit_price) }}
         </template>
       </el-table-column>
       <el-table-column label="生产总价（元）" width="140" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.assignments_total_price }}
+          {{ $numberWithCommas(scope.row.assignments_total_price) }}
         </template>
       </el-table-column>
       <el-table-column label="预计回货日期" width="140" align="center" :resizable="false">
@@ -64,17 +64,17 @@
       </el-table-column>
       <el-table-column label="回货总量" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.actual_return_quantity }}
+          {{ $numberWithCommas(scope.row.actual_return_quantity) || '/' }}
         </template>
       </el-table-column>
       <el-table-column label="已领取/待领取" width="140" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.received_num }}/{{ scope.row.pending_num }}
+          {{ $numberWithCommas(scope.row.received_num) }}/{{ $numberWithCommas(scope.row.pending_num) }}
         </template>
       </el-table-column>
       <el-table-column label="领取人数" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.receiver_count }}
+          {{ $numberWithCommas(scope.row.receiver_count) }}
         </template>
       </el-table-column>
       <el-table-column label="当前状态" width="100" align="center" :resizable="false">
@@ -93,7 +93,7 @@
         <template slot-scope="scope">
           <div class="table-operation-content">
             <el-button type="primary" :disabled="scope.row.status !== 'PENDING'" plain size="mini" @click="dispatchOrder(scope.row, 'dispatch')">发布</el-button>
-            <el-button type="primary" :disabled="scope.row.status !== 'PUBLISHED'" plain size="mini" @click="finishOrder(scope.row)">完成</el-button>
+            <el-button type="primary" :loading="finishLoading" :disabled="scope.row.status !== 'PUBLISHED'" plain size="mini" @click="finishOrder(scope.row)">完成</el-button>
           </div>
         </template>
       </el-table-column>
@@ -150,6 +150,7 @@ export default {
     return {
       list: null,
       listLoading: true,
+      finishLoading: false,
       searchForm: {
         productId: '',
         poiName: '',
@@ -193,11 +194,22 @@ export default {
       this.currentRowData = rowData
       this.currentType = type
     },
-    finishOrder(rowData) {
-      this.$confirm('是否确定完成订单?', '提示', {
+    async finishOrder(rowData) {
+      this.finishLoading = true
+      const finishRes = await this.$request.get(`/assignments/${rowData.assignment_id}`)
+      if (!finishRes.success) {
+        this.$message.error(finishRes.message)
+        return
+      }
+      this.$confirm(`<div>
+          <p>预计生产总量：${this.$numberWithCommas(finishRes.data.quantity)}${rowData.unit}</p>
+          <p>当前回货总量：${this.$numberWithCommas(finishRes.data.actual_return_quantity)}${rowData.unit}</p>
+          <p>预计生产总价：${this.$numberWithCommas(finishRes.data.assignments_total_price)}元</p>
+          <p>实际生产总价：<span style="color: red; font-size: 16px">${this.$numberWithCommas(finishRes.data.actual_total_price)}元</span></p>
+          </div>`, '完成订单', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
+        dangerouslyUseHTMLString: true
       }).then(() => {
         this.$request({
           url: `/assignments/${rowData.assignment_id}/complete`,

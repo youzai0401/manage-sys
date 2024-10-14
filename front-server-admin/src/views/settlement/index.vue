@@ -17,11 +17,11 @@
       highlight-current-row
       @selection-change="handleSelectionChange"
     >
-      <el-table-column
-        type="selection"
-        align="center"
-        width="55"
-      />
+      <!--      <el-table-column-->
+      <!--        type="selection"-->
+      <!--        align="center"-->
+      <!--        width="55"-->
+      <!--      />-->
       <el-table-column align="center" label="订单ID" min-width="95" :resizable="false">
         <template slot-scope="scope">
           {{ scope.row.order_id }}
@@ -44,12 +44,12 @@
       </el-table-column>
       <el-table-column label="生产总量" width="100" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.total_quantity }}
+          {{ $numberWithCommas(scope.row.quantity) }}
         </template>
       </el-table-column>
       <el-table-column label="回货总量" min-width="100" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.actual_return_quantity || '/' }}
+          {{ $numberWithCommas(scope.row.actual_return_quantity) || '/' }}
         </template>
       </el-table-column>
       <el-table-column label="预计回货日期" min-width="160" align="center" :resizable="false">
@@ -62,19 +62,19 @@
           {{ scope.row.actual_return_date ? $dayjs(scope.row.actual_return_date).format('YYYY-MM-DD') : '/' }}
         </template>
       </el-table-column>
-      <el-table-column label="单位（元）" :min-width="180" align="center" :resizable="false">
+      <el-table-column label="单位" :min-width="180" align="center" :resizable="false">
         <template slot-scope="scope">
           {{ scope.row.unit }}
         </template>
       </el-table-column>
       <el-table-column label="生产总价（元）" min-width="200" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.estimated_total_price }}
+          {{ $numberWithCommas(scope.row.estimated_total_price) }}
         </template>
       </el-table-column>
       <el-table-column label="结算总价（元）" min-width="200" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ scope.row.estimated_total_price }}
+          {{ $numberWithCommas(scope.row.actual_settlement_price) }}
         </template>
       </el-table-column>
       <el-table-column fixed="right" align="center" prop="" label="操作" width="180" :resizable="false">

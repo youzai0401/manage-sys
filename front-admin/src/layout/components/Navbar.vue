@@ -47,7 +47,7 @@ export default {
   },
   created() {
     this.userInfo = sessionStorage.getItem('userInfo')
-    this.userInfo = JSON.parse(this.userInfo)
+    this.userInfo = JSON.parse(this.userInfo || '{}')
   },
   methods: {
     toggleSideBar() {

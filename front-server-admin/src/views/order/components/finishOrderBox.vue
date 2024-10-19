@@ -159,7 +159,7 @@ export default {
     }
   },
   created() {
-    this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
+    this.userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}')
   },
   methods: {
     caclTotal() {

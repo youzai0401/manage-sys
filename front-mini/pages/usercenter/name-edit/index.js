@@ -14,7 +14,7 @@ Page({
       name
     } = options;
     this.setData({
-      nameValue: name,
+      nameValue: userInfo.name || '',
       userInfo: userInfo
     });
   },

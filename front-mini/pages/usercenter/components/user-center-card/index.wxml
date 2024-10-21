@@ -1,5 +1,6 @@
 <view class="user-center-card">
   <!-- 未登录的情况 -->
+  {{currAuthStep}}
   <block wx:if="{{currAuthStep === AuthStepType.ONE}}">
     <view class="user-center-card__header" bind:tap="gotoLogin">
       <t-image wx:if="{{userInfo.avatar_url}}" t-class="avatar-img" src="{{userInfo.avatar_url}}" mode="aspectFill" />

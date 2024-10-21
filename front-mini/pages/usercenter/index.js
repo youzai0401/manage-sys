@@ -54,6 +54,11 @@ Page({
       userInfo: userInfo,
       phone: userInfo.contact_number
     })
+    if (userInfo.contact_number) {
+      this.setData({
+        currAuthStep: 2
+      })
+    }
     this.getTabBar().init();
     this.init();
   },

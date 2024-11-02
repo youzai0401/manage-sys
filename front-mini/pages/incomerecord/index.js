@@ -59,7 +59,7 @@ Page({
   },
 
   init() {
-    this.loadHomePage();
+    // this.loadHomePage();
   },
 
   loadHomePage() {

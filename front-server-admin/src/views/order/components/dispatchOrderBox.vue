@@ -68,7 +68,7 @@
 </template>
 
 <script>
-
+import { BigNumber } from 'bignumber.js'
 export default {
   name: 'DispatchOrderBox',
   props: {
@@ -122,7 +122,8 @@ export default {
     },
     estimated_total() {
       if (this.formData.worker_unit_price) {
-        return this.formData.worker_unit_price * this.currentRowData.quantity
+        const worker_unit_price = new BigNumber(this.formData.worker_unit_price)
+        return worker_unit_price.multipliedBy(this.currentRowData.quantity).toFixed(2)
       }
       return ''
     }

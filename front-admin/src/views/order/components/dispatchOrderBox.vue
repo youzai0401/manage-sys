@@ -75,6 +75,7 @@
 </template>
 
 <script>
+import { BigNumber } from 'bignumber.js'
 export default {
   name: 'DispatchOrderBox',
   props: {
@@ -135,14 +136,15 @@ export default {
       }
     },
     assignments_total_price() {
-      let total = 0
+      let total = new BigNumber(0)
       if (this.assignments.length) {
         this.assignments.forEach(item => {
           if (item.quantity * item.worker_unit_price) {
-            total += item.quantity * item.worker_unit_price
+            const quantity = new BigNumber(item.quantity)
+            total = total.plus(quantity.multipliedBy(item.worker_unit_price))
           }
         })
-        return total
+        return total.toFixed(2)
       } else {
         return 0
       }

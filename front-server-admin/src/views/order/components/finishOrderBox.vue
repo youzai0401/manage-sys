@@ -77,6 +77,7 @@
 </template>
 
 <script>
+import { BigNumber } from 'bignumber.js'
 export default {
   name: 'FinishOrderBox',
   props: {
@@ -131,7 +132,8 @@ export default {
     },
     estimated_total() {
       if (this.worker_unit_price) {
-        return this.worker_unit_price * this.currentRowData.total_quantity
+        const worker_unit_price = new BigNumber(this.formData.worker_unit_price)
+        return worker_unit_price.multipliedBy(this.currentRowData.total_quantity).toFixed(2)
       }
       return ''
     }
@@ -164,12 +166,15 @@ export default {
   methods: {
     caclTotal() {
       if (this.formData.actual_settlement_quantity) {
-        this.formData.actual_salary = (this.formData.actual_settlement_quantity * this.currentRowData.worker_unit_price).toFixed(2)
+        const actual_settlement_quantity = new BigNumber(this.formData.actual_settlement_quantity)
+        this.formData.actual_salary = actual_settlement_quantity.multipliedBy(this.currentRowData.worker_unit_price).toFixed(2)
         if (this.formData.reward_salary) {
-          this.formData.actual_salary = (Number(this.formData.actual_salary) + Number(this.formData.reward_salary)).toFixed(2)
+          const actual_salary = new BigNumber(Number(this.formData.actual_salary))
+          this.formData.actual_salary = actual_salary.plus(Number(this.formData.reward_salary)).toFixed(2)
         }
         if (this.formData.deduction_salary) {
-          this.formData.actual_salary = (Number(this.formData.actual_salary) - Number(this.formData.deduction_salary)).toFixed(2)
+          const actual_salary = new BigNumber(Number(this.formData.actual_salary))
+          this.formData.actual_salary = actual_salary.minus(Number(this.formData.deduction_salary)).toFixed(2)
         }
       }
     },

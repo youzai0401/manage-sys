@@ -49,8 +49,18 @@ Page({
 
   async onLoad(options) {
     await wxLogin()
-    if (options.service_point_id) {
-      await this.handleBindServicePoint(options.service_point_id)
+    const scene = decodeURIComponent(options.scene)
+    let sceneParams = {}
+    if (scene) {
+      let paramArr = scene.split("&");
+      paramArr.forEach((item, index) => {
+        let key = item.split('=')[0];
+        let value = item.split('=')[1];
+        sceneParams[key] = value;
+      })
+    }
+    if (options.service_point_id || sceneParams.service_point_id) {
+      await this.handleBindServicePoint(options.service_point_id || sceneParams.service_point_id)
     }
     this.init();
   },
@@ -144,6 +154,12 @@ Page({
     }
     try {
       let userInfo = wx.getStorageSync("userInfo")
+      if (!userInfo.service_point_id) {
+        this.setData({
+          goodsListLoadStatus: 3
+        });
+        return;
+      }
       const nextList = await fetchOrderList({
         page: pageIndex,
         page_size: pageSize,

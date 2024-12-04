@@ -168,7 +168,7 @@ export default {
       })
     },
     refresh() {
-      this.currentPage = 1
+      // this.currentPage = 1
       this.fetchData()
     },
     handleSizeChange(val) {
@@ -207,8 +207,9 @@ export default {
               type: 'success',
               message: '工单已发放!'
             })
-            this.currentPage = 1
-            this.fetchData()
+            this.refresh()
+            // this.currentPage = 1
+            // this.fetchData()
           } else {
             this.$message({
               type: 'error',

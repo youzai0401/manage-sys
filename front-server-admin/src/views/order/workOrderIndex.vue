@@ -1,7 +1,31 @@
 <template>
   <div class="app-container">
     <!--搜索项-->
-
+    <el-form :inline="true" :model="searchForm" class="demo-form-inline" @submit.native.prevent>
+      <el-form-item label="工人（领取人）">
+        <el-select
+          v-model="searchForm.worker_id"
+          filterable
+          remote
+          style="width: 100%"
+          clearable
+          placeholder="请输入关键词"
+          :remote-method="remoteMethodWorker"
+          :loading="workerLoading"
+        >
+          <el-option
+            v-for="item in workerOptions"
+            :key="item.worker_id"
+            :label="item.name"
+            :value="item.worker_id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="onSearch">查询</el-button>
+        <el-button type="ghost" @click="handleReset">重置</el-button>
+      </el-form-item>
+    </el-form>
     <!--列表展示-->
     <el-table
       ref="table"
@@ -143,11 +167,13 @@ export default {
       showDispatchOrder: false,
       showChangeOrder: false,
       showFinishOrder: false,
+      workerLoading: false,
       currentRowData: {},
       currentType: '',
       cityOptions: [],
       cityLoading: false,
       multipleSelection: [],
+      workerOptions: [],
       currentPage: 1,
       pageSize: 10,
       total: 0,
@@ -159,6 +185,13 @@ export default {
     this.fetchData()
   },
   methods: {
+    onSearch() {
+      this.currentPage = 1
+      this.fetchData()
+    },
+    handleReset() {
+      this.searchForm.worker_id = ''
+    },
     handleAdd() {
       this.$router.push({
         path: '/product/addAndEditProduct',
@@ -166,6 +199,34 @@ export default {
           type: 'add'
         }
       })
+    },
+    remoteMethodWorker(query) {
+      if (query !== '') {
+        this.workerLoading = true
+        // 请求
+        const url = '/workers'
+        const params = {
+          service_point_id: this.userInfo.service_point_id,
+          page: 1,
+          page_size: 10,
+          name: query
+        }
+        this.$request.get(url, {
+          params: {
+            ...params
+          }
+        }).then(res => {
+          console.log(res)
+          if (res) {
+            this.workerOptions = res.data.data
+          }
+          this.workerLoading = false
+        }).catch(() => {
+          this.workerLoading = false
+        })
+      } else {
+        this.workerOptions = []
+      }
     },
     refresh() {
       // this.currentPage = 1
@@ -262,7 +323,8 @@ export default {
       const params = {
         'page': this.currentPage,
         'page_size': this.pageSize,
-        service_point_id: this.userInfo.service_point_id
+        service_point_id: this.userInfo.service_point_id,
+        worker_id: this.searchForm.worker_id
       }
 
       // this.list = [{

@@ -200,9 +200,9 @@ Page({
       return;
     }
     // 判断必须为100的整数倍
-    if (this.data.claimValue % 100 !== 0) {
+    if (this.data.claimValue % 10 !== 0) {
       wx.showToast({
-        title: '领取单量必须是100的倍数，如：1000、1100、1200',
+        title: '领取单量必须是10的倍数，如：100、1100、1200',
         duration: 3000,
         icon: 'none',
       });

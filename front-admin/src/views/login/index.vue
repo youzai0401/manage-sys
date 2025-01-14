@@ -111,7 +111,7 @@ export default {
             'password': this.loginForm.password
           }
           this.$request({
-            url: '/auth/login',
+            url: '/auth/admin/login',
             method: 'post',
             data: params
           }).then(res => {

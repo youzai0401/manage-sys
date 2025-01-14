@@ -47,14 +47,19 @@
           {{ scope.row.avg_quality_rate * 100 }}%
         </template>
       </el-table-column>
-      <!--      <el-table-column fixed="right" align="center" prop="" label="操作" width="180" :resizable="false">-->
-      <!--        <template slot-scope="scope">-->
-      <!--          <div class="table-operation-content">-->
-      <!--            <el-button type="primary" plain size="mini" @click="handelEdit(scope.row)">编辑</el-button>-->
-      <!--            <el-button type="danger" plain size="mini" @click="handleDel(scope.row)">删除</el-button>-->
-      <!--          </div>-->
-      <!--        </template>-->
-      <!--      </el-table-column>-->
+      <el-table-column label="备注" min-width="160" align="center" :resizable="false">
+        <template slot-scope="scope">
+          {{ scope.row.remark }}
+        </template>
+      </el-table-column>
+            <el-table-column fixed="right" align="center" prop="" label="操作" width="180" :resizable="false">
+              <template slot-scope="scope">
+                <div class="table-operation-content">
+                  <el-button type="primary" plain size="mini" @click="handelEdit(scope.row)">编辑</el-button>
+<!--                  <el-button type="danger" plain size="mini" @click="handleDel(scope.row)">删除</el-button>-->
+                </div>
+              </template>
+            </el-table-column>
     </el-table>
     <el-pagination
       :current-page="currentPage"
@@ -66,15 +71,18 @@
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
     />
-    <editBox :show.sync="showEditBox" :current-row-data="currentRowData" />
+    <addBox :show.sync="showAddBox" :current-row-data="currentRowData" />
+    <editBox :show.sync="showEditBox" @success="handleCurrentChange(1)" :current-row-data="currentRowData" />
   </div>
 </template>
 
 <script>
+import addBox from './components/addBox'
 import editBox from './components/editBox'
 export default {
   name: 'Product',
   components: {
+    addBox,
     editBox
   },
   filters: {
@@ -94,6 +102,7 @@ export default {
       },
       currentProductId: '',
       currentProductName: '',
+      showAddBox: false,
       showEditBox: false,
       currentRowData: {},
       cityOptions: [],
@@ -111,7 +120,7 @@ export default {
   },
   methods: {
     handleAdd() {
-      this.showEditBox = true
+      this.showAddBox = true
       this.currentRowData = {}
     },
     handleCurrentChange(val) {

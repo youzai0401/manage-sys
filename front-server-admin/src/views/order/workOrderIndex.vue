@@ -51,7 +51,7 @@
           {{ $numberWithCommas(scope.row.worker_name) }}
         </template>
       </el-table-column>
-      <el-table-column label="领取数量" :width="180" align="center" :resizable="false">
+      <el-table-column label="领取数量" :width="160" align="center" :resizable="false">
         <template slot-scope="scope">
           {{ $numberWithCommas(scope.row.receiver_quantity) }}
         </template>
@@ -61,7 +61,7 @@
           {{ scope.row.unit }}
         </template>
       </el-table-column>
-      <el-table-column label="领取时间" width="160" align="center" :resizable="false">
+      <el-table-column label="领取时间" width="140" align="center" :resizable="false">
         <template slot-scope="scope">
           {{ scope.row.material_pickup_date ? $dayjs(scope.row.material_pickup_date).format('YYYY-MM-DD') : "-" }}
         </template>
@@ -109,6 +109,13 @@
         <template slot-scope="scope">
           <div style="text-align: left; white-space: break-spaces;">
             {{ scope.row.material_description }}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="工人备注" min-width="200" align="center" :resizable="false">
+        <template slot-scope="scope">
+          <div style="text-align: left; white-space: break-spaces;">
+            {{ scope.row.remark }}
           </div>
         </template>
       </el-table-column>

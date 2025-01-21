@@ -51,9 +51,9 @@
           {{ $numberWithCommas(scope.row.worker_name) }}
         </template>
       </el-table-column>
-      <el-table-column label="领取数量" :width="160" align="center" :resizable="false">
+      <el-table-column label="领取量/回货量" :width="160" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ $numberWithCommas(scope.row.receiver_quantity) }}
+          {{ $numberWithCommas(scope.row.receiver_quantity) }}/{{ $numberWithCommas(scope.row.actual_settlement_quantity) }}
         </template>
       </el-table-column>
       <el-table-column label="单位" width="100" align="center" :resizable="false">
@@ -66,7 +66,7 @@
           {{ scope.row.material_pickup_date ? $dayjs(scope.row.material_pickup_date).format('YYYY-MM-DD') : "-" }}
         </template>
       </el-table-column>
-      <el-table-column label="单价（元）" width="100" align="center" :resizable="false">
+      <el-table-column label="工单单价（元）" width="120" align="center" :resizable="false">
         <template slot-scope="scope">
           {{ $numberWithCommas(scope.row.worker_unit_price) }}
         </template>

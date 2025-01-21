@@ -31,7 +31,7 @@
                 <span>{{ $dayjs(currentRowData.estimated_return_date).format('YYYY-MM-DD') }}</span>
               </el-form-item>
             </el-col>
-            <el-form-item v-if="!(userInfo.type === 'DIRECT' || !userInfo.is_salary_managed)" label="工人单价" prop="worker_unit_price">
+            <el-form-item label="工人单价" prop="worker_unit_price">
               <el-input v-model="formData.worker_unit_price" style="width: 300px" placeholder="请输入工人生产单支报价，单位：元"><span slot="suffix">/元</span></el-input>
             </el-form-item>
             <el-form-item label="交付时间" prop="estimated_pay_date">

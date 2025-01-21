@@ -67,12 +67,22 @@
           {{ scope.row.unit }}
         </template>
       </el-table-column>
-      <el-table-column label="生产总价（元）" min-width="200" align="center" :resizable="false">
+      <el-table-column label="订单单价（元）" min-width="200" align="center" :resizable="false">
         <template slot-scope="scope">
-          {{ $numberWithCommas(scope.row.estimated_total_price) }}
+          {{ $numberWithCommas(scope.row.assignments_price) }}
         </template>
       </el-table-column>
-      <el-table-column label="结算总价（元）" min-width="200" align="center" :resizable="false">
+      <el-table-column label="工单单价（元）" min-width="200" align="center" :resizable="false">
+        <template slot-scope="scope">
+          {{ $numberWithCommas(scope.row.actual_settlement_price) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="订单总价（元）" min-width="200" align="center" :resizable="false">
+        <template slot-scope="scope">
+          {{ $numberWithCommas(scope.row.assignments_total_price) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="工单总价（元）" min-width="200" align="center" :resizable="false">
         <template slot-scope="scope">
           {{ $numberWithCommas(scope.row.actual_settlement_price) }}
         </template>

@@ -111,7 +111,7 @@ export default {
             } else {
               this.$message.error(res.message)
             }
-          }).catch(() => {
+          }).finally(() => {
             this.isSaving = false
           })
         } else {

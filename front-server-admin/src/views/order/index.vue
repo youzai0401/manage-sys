@@ -47,7 +47,7 @@
           {{ scope.row.unit }}
         </template>
       </el-table-column>
-      <el-table-column label="单价（元）" width="100" align="center" :resizable="false">
+      <el-table-column label="订单单价（元）" width="120" align="center" :resizable="false">
         <template slot-scope="scope">
           {{ $numberWithCommas(scope.row.worker_unit_price) }}
         </template>
@@ -231,6 +231,7 @@ export default {
           type: 'info',
           message: '已取消'
         })
+        this.finishLoading = false
       })
     },
     handleRefresh() {
